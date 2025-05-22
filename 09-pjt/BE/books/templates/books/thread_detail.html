@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  {% if thread.cover_img %}
+  <div class="mb-3" style="width: 100%;">
+    <img src="{{ thread.cover_img.url }}" alt="Thread Cover Image" class="img-fluid">
+  </div>
+  {% endif %}
+
+  <div class="d-flex flex-row justify-content-between align-items-between">
+    <h1 class="mb-3">{{ thread.title }}</h1>
+    <div>
+      {% if thread.user == user %}
+        <a href="{% url 'books:thread_update' book.pk thread.pk %}" class="btn btn-secondary">수정</a>
+        <form action="{% url 'books:thread_delete' book.pk thread.pk %}" method="POST" class="d-inline ms-2">
+          {% csrf_token %}
+          <input type="submit" value="삭제" class="btn btn-danger">
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="mb-2">
+    <strong>도서:</strong> <a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a>
+    <strong class="ms-2">작성자:</strong> <a href="{% url 'accounts:profile' thread.user.username %}">{{ thread.user.username }}</a>
+    <strong class="ms-2">독서일:</strong> {{ thread.reading_date }}
+  </div>
+  
+  <div class="mb-3">
+    <p>{{ thread.content }}</p>
+  </div>
+  
+  <div class="d-flex flex-row justify-content-start align-items-center gap-2">
+    {% if user.is_authenticated %}
+      <form id="like-form"
+            method="POST"
+            data-url="{% url 'books:likes' book.pk thread.pk %}"
+            action="javascript:void(0);"
+            class="d-inline-flex align-items-center gap-2">
+        <i class="bi bi-heart-fill"></i>
+        <span id="like-count">{{ thread.likes.count }}</span><span>좋아요</span>
+        {% csrf_token %}
+        <button type="submit"
+                id="like-btn"
+                class="btn {% if user in thread.likes.all %}btn-outline-success{% else %}btn-success{% endif %} btn-sm">
+          {% if user in thread.likes.all %}
+            좋아요 취소
+          {% else %}
+            좋아요
+          {% endif %}
+        </button>
+      </form>
+    {% else %}
+      <p><a href="{% url 'accounts:login' %}">로그인</a> 후 좋아요를 누를 수 있습니다.</p>
+    {% endif %}
+  </div>
+  
+  <hr>
+  
+  <!-- 쓰레드 댓글 출력 섹션 -->
+  <h3>댓글</h3>
+  <div class="mb-3" id="comment-list">
+    {% for comment in thread.comments.all %}
+      <div id="comment-{{ comment.pk }}" class="d-flex flex-row align-items-baseline gap-2">
+        <p>{{ comment.content }}</p>
+        <small ><a href="{% url 'accounts:profile' comment.user.username %}"> ({{ comment.user.username }})</a></small>
+        {% if comment.user == user %}
+          <button class="delete-comment-btn " data-comment-id="{{ comment.pk }}">삭제</button>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p id="no-comments">작성된 댓글이 없습니다.</p>
+    {% endfor %}
+  </div>
+
+  <!-- 댓글 작성 폼 -->
+  <h4>댓글 작성</h4>
+  <form id="comment-form" method="POST" action="{% url 'books:create_comment' book.pk thread.pk %}">
+    {% csrf_token %}
+    {{ comment_form.content }}
+    <input type="submit" value="전송">
+  </form>
+  
+  <hr>
+  
+  <a href="{% url 'books:detail' thread.book.pk %}" class="btn btn-secondary">BACK</a>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  const likeForm = document.getElementById("like-form")
+  const likeButton = document.getElementById("like-btn")
+  const likeCount = document.getElementById("like-count")
+
+  likeForm.addEventListener("submit", function (e) {
+    e.preventDefault()
+    console.log("요청 보낼 URL:", likeForm.dataset.url)
+
+    fetch(likeForm.dataset.url, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      likeCount.textContent = data.like_count
+      likeButton.textContent = data.liked ? "좋아요 취소" : "좋아요"
+    
+      if (!data.liked) {
+        likeButton.classList.remove("btn-outline-success")
+        likeButton.classList.add("btn-success")
+        console.log('1')
+      } else {
+        likeButton.classList.remove("btn-success")
+        likeButton.classList.add("btn-outline-success")
+        console.log('2')
+
+      }
+    })
+    
+    .catch(error => console.error("좋아요 처리 중 에러:", error))
+  })
+
+  const commentForm = document.getElementById("comment-form")
+  const commentList = document.getElementById("comment-list")
+  const noComments = document.getElementById("no-comments")
+
+  commentForm.addEventListener("submit", function (e) {
+    e.preventDefault()
+
+    const formData = new FormData(commentForm)
+    fetch(commentForm.action, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: formData,
+    })
+    .then(res => res.json())
+
+    .then(data => {
+      if (data.error) return alert(data.error)
+
+      // 댓글 추가
+      if (noComments) noComments.remove()
+      const div = document.createElement("div")
+      div.id = `comment-${data.id}`
+      div.className = "d-flex flex-row align-items-baseline gap-2"
+      div.innerHTML = `
+        <p>${data.content}</p>
+        <small><a href="/accounts/profile/${data.username}/">(${data.username})</a></small>
+        <button class="delete-comment-btn" data-comment-id="${data.id}">삭제</button>
+      `
+      commentList.appendChild(div)
+      commentForm.reset()
+    })
+  })
+
+  commentList.addEventListener("click", function (e) {
+    if (e.target.classList.contains("delete-comment-btn")) {
+      const commentId = e.target.dataset.commentId
+      fetch(`/books/${bookPk}/comment/${commentId}/delete/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.deleted) {
+          const target = document.getElementById(`comment-${commentId}`)
+          target.remove()
+        }
+      })
+    }
+  })
+
+  const bookPk = {{ book.pk }}
+</script>
+{% endblock script %}

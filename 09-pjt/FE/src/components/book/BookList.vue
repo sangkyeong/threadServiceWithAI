@@ -35,7 +35,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useBooksStore, useCategoryStore } from '@/stores/data'
 import BookCard from './BookCard.vue'
 
 const booksStore = useBooksStore()
