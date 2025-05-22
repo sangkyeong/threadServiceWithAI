@@ -1,6 +1,10 @@
 <template>
     <div>
-        <RouterLink :to="{name:'threadDetail', params:{'threadId':thread.id}}" >{{ thread.title }}</RouterLink>
+        <RouterLink 
+            :to="{name:'threadDetail', params:{'threadId':thread.id}}" 
+        >
+            {{ thread.title }}
+        </RouterLink>
     </div>
 </template>
 

@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
-// 이거 나중에 상경 쓰레드 경로로 변경하기
+
 import ThreadsListView from '@/views/thread/ThreadListView.vue'
 import ThreadDetailView from '@/views/thread/ThreadDetailView.vue'
 import ThreadWriteView from '@/views/thread/ThreadWriteView.vue'
+import ThreadUpdateView from '@/views/thread/ThreadUpdateView.vue'
 import BookListView from '@/views/Books/BookListView.vue'
 
 const router = createRouter({
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/threads/:threadId',
       name: 'threadDetail',
       component: ThreadDetailView
+    },
+    {
+      path: '/threads/:threadId/update',
+      name: 'threadUpdate',
+      component: ThreadUpdateView
     },
     {
       path: '/threads/:bookId/write',

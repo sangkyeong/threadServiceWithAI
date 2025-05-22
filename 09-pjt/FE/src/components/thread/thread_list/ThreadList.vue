@@ -10,41 +10,36 @@
       {{ category.fields.name }}
     </div>
 
-    <h1>detail</h1>
     <div>
-      <ThreadItem
-        v-for="thread in filteredThreads"
-        :key="thread.id"
-        :thread="thread"
-      />
+      <div v-if="threads">
+        <ThreadItem
+          v-for="thread in threads"
+          :key="thread.id"
+          :thread="thread"
+        />
+      </div>
+      <div v-else>
+        <h2>스레드가 없습니다.</h2>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
-  import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
-  import { useCategoryStore, useBooksStore } from '@/stores/data.js'
-  import { useThreadStore } from '@/stores/thread.js'
-  const bookStore = useBooksStore()
-  const threadStore = useThreadStore()
-  const categoryStore = useCategoryStore()
+import { ref, computed } from 'vue'
+import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
+import { useCategoryStore } from '@/stores/data.js'
+import { useThreadStore } from '@/stores/thread.js'
 
-  const books = bookStore.books
-  const threads = threadStore.threads
+const threadStore = useThreadStore()
+const categoryStore = useCategoryStore()
 
-  const selectedCategoryId = ref(null)
+const selectedCategoryId = ref(null)
 
-  const filteredBooks = computed(() => {
-    console.log(selectedCategoryId.value)
-    if (!selectedCategoryId.value) return books
-    return books.filter(book => book.fields.category === selectedCategoryId.value)
-  })
-
-  const filteredThreads = computed(() => {
-    const bookIds = filteredBooks.value.map(book => book.fields.pk)
-    return threads.filter(thread => bookIds.includes(thread.bookId))
-  })
+const threads = computed(() => {
+  if (!selectedCategoryId.value) return threadStore.threads
+  return threadStore.threads.filter(thread => thread.categoryId === selectedCategoryId.value)
+})
 
 </script>
 

@@ -4,32 +4,15 @@ import { useBooksStore } from '@/stores/data.js'
 
 
 export const useThreadStore = defineStore('threads', () => {
-  let id = 0
+  let id = 1
 
-  const threads = ref([
-    {
-      id: 1,
-      bookId: 1,
-      categoryId: 1,
-      title: 'title',
-      content: 'content',
-      readDate: '2025-05-16',
-    },
-    {
-      id: 2,
-      bookId: 2,
-      categoryId: 1,
-      title: 'title2',
-      content: 'content2',
-      readDate: '2025-05-16',
-    },
-  ])
+  const threads = ref([])
 
   const addThreads = function(title, bookId, content, readDate){
     const bookStore = useBooksStore()
     const categoryId = computed(() => {
-      const book = bookStore.books.find(book => book.id === bookId)
-      return book?.categoryId ?? null
+    const book = bookStore.books.find(book => book.id === bookId)
+    const categoryId = book ? book.categoryId : null
     })
     threads.value.push({
       id: id++,
@@ -39,9 +22,30 @@ export const useThreadStore = defineStore('threads', () => {
       content: content,
       readDate: readDate,
     })
-    console.log(threads)
   }
+
+  const getThreadById = (threadId) => {
+    return threads.value.find(thread => thread.id === Number(threadId))
+  }
+
+  const removeThread = (threadId) => {
+    threads.value = threads.value.filter(thread => thread.id !== threadId)
+  }
+
+ const updateThread = (threadId, { title, content, readDate }) => {
+  const idx = threads.value.findIndex(thread => thread.id === Number(threadId))
+  if (idx !== -1) {
+    threads.value[idx] = {
+      ...threads.value[idx],
+      title,
+      content,
+      readDate,
+    }
+  }
+}
+
   return{
-    threads, addThreads
+    threads, 
+    addThreads, getThreadById, removeThread, updateThread
   }
 }, { persist: true})

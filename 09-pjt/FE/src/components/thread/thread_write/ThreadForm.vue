@@ -1,5 +1,4 @@
 <template>
-    <h2>새로운 쓰레드 작성</h2>
     <form @submit.prevent="onThreadSave">
         <div>
             <p>제목</p>
@@ -24,19 +23,20 @@
 <script setup>
     import { ref } from 'vue'
     import { useThreadStore } from '@/stores/thread.js'
-    import { useRoute } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     const route = useRoute()
+    const router = useRouter()
     // import BookCard from '@/'
     const store = useThreadStore()
     const title = ref('')
-    const bookId = ref(route.params.bookId)
+    const bookId = Number(route.params.bookId)
     const content = ref('')
     const readDate = ref('')
 
     
     const onThreadSave = () => {
-        console.log(bookId.value)
-        store.addThreads(title.value, bookId.value, content.value, readDate.value)
+        store.addThreads(title.value, bookId, content.value, readDate.value)
+        router.push({name: 'threads'})
     }
 </script>
 
