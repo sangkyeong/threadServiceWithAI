@@ -9,15 +9,15 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 # from .serializers import ArticleListSerializer, ArticleSerializer
-from .models import Book
+from .models import Thread
 
 
-# articles/views.py
+# # articles/views.py
 # @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
 # def article_list(request):
 #     if request.method == 'GET':
-#         articles = get_list_or_404(Book)
+#         articles = get_list_or_404(Thread)
 #         serializer = ArticleListSerializer(articles, many=True)
 #         return Response(serializer.data)
 
@@ -30,7 +30,7 @@ from .models import Book
 
 # @api_view(['GET'])
 # def article_detail(request, article_pk):
-#     article = get_object_or_404(Book, pk=article_pk)
+#     article = get_object_or_404(Thread, pk=article_pk)
 
 #     if request.method == 'GET':
 #         serializer = ArticleSerializer(article)
