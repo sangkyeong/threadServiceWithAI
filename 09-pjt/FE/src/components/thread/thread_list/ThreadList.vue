@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>ThreadList</h1>
+    <h1>쓰레드 목록</h1>
     <div>
       <div v-if="threadStore.threads">
         <ThreadItem
@@ -10,7 +10,7 @@
         />
       </div>
       <div v-else>
-        <h2>스레드가 없습니다.</h2>
+        <h2>쓰레드가 없습니다.</h2>
       </div>
     </div>
   </div>

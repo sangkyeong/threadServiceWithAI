@@ -1,5 +1,5 @@
 <template>
-  <h1>수정</h1>
+  <h1>쓰레드 수정</h1>
   <form @submit.prevent="onThreadUpdate">
     <div>
       <p>제목</p>
@@ -19,33 +19,37 @@
     </div>
     <button type="button" @click="onCancel">취소</button>
     <button type="submit">저장</button>
+    <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
   </form>
 </template>
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import { useThreadStore } from '@/stores/thread.js'
     import { useRouter, useRoute } from 'vue-router'
 
     const route = useRoute()
     const router = useRouter()
-    const store = useThreadStore()
-
-    const threadId = route.params.threadId
-
-    const thread = store.threads.find(t => t.id === Number(threadId))
-
+    const threadStore = useThreadStore()
+    
     // 초기값 설정
-    const title = ref(thread ? thread.title : '')
-    const content = ref(thread ? thread.content : '')
-    const readDate = ref(thread ? thread.readDate : '')
+    const title = ref('')
+    const content = ref('')
+    const readDate = ref('')
+    
+    onMounted(async () => {
+      await threadStore.getThreadById(route.params.threadId)
+      title.value = threadStore.threadDetail.title
+      content.value = threadStore.threadDetail.content
+      readDate.value = threadStore.threadDetail.reading_date
+      threadStore.errors = ''
+    })
 
     const onThreadUpdate = () => {
-      store.updateThread(threadId, {
+      threadStore.updateThread(route.params.threadId, {
           title: title.value,
           content: content.value,
-          readDate: readDate.value,
+          reading_date: readDate.value,
       })
-      router.push({ name: 'threads' })
     }
 
     const onCancel = () => {
