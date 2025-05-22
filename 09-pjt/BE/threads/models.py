@@ -13,7 +13,8 @@ class Thread(models.Model):
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_threads", blank=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+        blank=True,null=True,
     )
 
     def __str__(self):

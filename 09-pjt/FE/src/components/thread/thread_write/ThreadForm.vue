@@ -33,7 +33,6 @@
     const content = ref('')
     const readDate = ref('')
 
-    
     const onThreadSave = () => {
         store.addThreads(title.value, bookId, content.value, readDate.value)
         router.push({name: 'threads'})

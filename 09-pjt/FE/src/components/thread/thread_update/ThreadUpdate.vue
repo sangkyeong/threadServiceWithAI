@@ -40,12 +40,12 @@
     const readDate = ref(thread ? thread.readDate : '')
 
     const onThreadUpdate = () => {
-    store.updateThread(threadId, {
-        title: title.value,
-        content: content.value,
-        readDate: readDate.value,
-    })
-    router.push({ name: 'threads' })
+      store.updateThread(threadId, {
+          title: title.value,
+          content: content.value,
+          readDate: readDate.value,
+      })
+      router.push({ name: 'threads' })
     }
 
     const onCancel = () => {

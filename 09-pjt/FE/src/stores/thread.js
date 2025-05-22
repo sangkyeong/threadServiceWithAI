@@ -1,27 +1,46 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useBooksStore } from '@/stores/data.js'
+import axios from 'axios'
 
 
 export const useThreadStore = defineStore('threads', () => {
-  let id = 1
-
   const threads = ref([])
+  const BASE_URL = 'http://127.0.0.1:8000/threads'
+
+  const getAllThreads = function(){
+    axios({
+      method: 'get',
+      url: `${BASE_URL}`
+    })
+    .then((res) => {
+      threads.value = res.data
+    })
+    .catch((err) => console.log(err))
+  }
 
   const addThreads = function(title, bookId, content, readDate){
-    const bookStore = useBooksStore()
-    const categoryId = computed(() => {
-    const book = bookStore.books.find(book => book.id === bookId)
-    const categoryId = book ? book.categoryId : null
+    axios({
+      method: 'post',
+      url: `${BASE_URL}/${bookId}/create`,
+      data: {
+        title: title,
+        content: content,
+        reading_date: readDate,
+        // headers: {
+        //   Authorization: `Token ${token}`
+        // }
+      }
     })
-    threads.value.push({
-      id: id++,
-      bookId: bookId,
-      categoryId: categoryId,
-      title: title,
-      content: content,
-      readDate: readDate,
+    .then((res) => {
+      console.log("create")
+      console.log(res)
     })
+    .catch((err) => console.log(err))
+
+    // const categoryId = computed(() => {
+    // const book = bookStore.books.find(book => book.id === bookId)
+    // // const categoryId = book ? book.categoryId : null
+    // })
   }
 
   const getThreadById = (threadId) => {
@@ -46,6 +65,6 @@ export const useThreadStore = defineStore('threads', () => {
 
   return{
     threads, 
-    addThreads, getThreadById, removeThread, updateThread
+    getAllThreads, addThreads, getThreadById, removeThread, updateThread
   }
 }, { persist: true})
