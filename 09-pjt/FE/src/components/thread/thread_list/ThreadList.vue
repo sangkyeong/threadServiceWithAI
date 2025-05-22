@@ -28,11 +28,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
-import { useCategoryStore } from '@/stores/data.js'
+// import { useCategoryStore } from '@/stores/data.js'
 import { useThreadStore } from '@/stores/thread.js'
 
 const threadStore = useThreadStore()
-const categoryStore = useCategoryStore()
+// const categoryStore = useCategoryStore()
 
 const selectedCategoryId = ref(null)
 
