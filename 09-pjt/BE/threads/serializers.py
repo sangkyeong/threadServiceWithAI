@@ -1,8 +1,15 @@
 from rest_framework import serializers
-from .models import Thread
+from .models import Thread, Comment
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('user', 'thread')
 
 class ThreadListSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Thread
         fields = '__all__'
@@ -11,7 +18,7 @@ class ThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Thread
         fields = ('title', 'content', 'reading_date')
-        # read_only_fields = ('user',)
+        read_only_fields = ('user',)
 
 # articles/serializers.py
 # class ArticleListSerializer(serializers.ModelSerializer):

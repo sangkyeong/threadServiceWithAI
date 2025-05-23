@@ -93,12 +93,41 @@ export const useThreadStore = defineStore('threads', () => {
     console.log(err)
     errors.value = err.response.data
   })
-    
 }
+
+const addThreadComment = function(threadId, content){
+  axios.post(
+      `${BASE_URL}/${threadId}/comment/create/`,
+        {
+          content
+        },
+        // headers: {
+        //   Authorization: `Token ${token}`
+        // }
+    ).then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+      errors.value = err.response.data
+    })
+  }
+
+  const removeThreadComment = (threadId) => {
+    axios.delete(
+        `${BASE_URL}/comment/${threadId}/delete/`
+      ).then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
 
   return{
     threads, errors, threadDetail, 
-    getAllThreads, addThreads, getThreadById, removeThread, updateThread
+    getAllThreads, addThreads, getThreadById, removeThread, updateThread,
+    addThreadComment, removeThreadComment
   }
 }, { persist: {
     paths: ['token', 'threads']
