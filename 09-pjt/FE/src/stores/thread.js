@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useBooksStore } from '@/stores/data.js'
+// import { useBooksStore } from '@/stores/data.js'
 
 
 export const useThreadStore = defineStore('threads', () => {
