@@ -1,7 +1,8 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path('articles/', views.article_list),
-    # path('articles/<int:article_pk>/', views.article_detail),
+    path('books/', views.book_list),
+    path('books/<int:book_pk>/', views.book_detail),
+    path('categories/', views.category_list),
 ]

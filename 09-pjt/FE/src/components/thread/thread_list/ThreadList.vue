@@ -22,7 +22,6 @@ import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
 import { useThreadStore } from '@/stores/thread.js'
 const threads = ref('')
 const threadStore = useThreadStore()
-
 onMounted(() => {
   threadStore.getAllThreads()
 })
