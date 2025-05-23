@@ -1,5 +1,13 @@
 <template>
   <h1>쓰레드 상세</h1>
+  <div>
+    <h4>♥{{ likeCount }}</h4>
+    <div v-if="thread">
+    <button @click="likeButton">
+      {{ thread.liked ? '좋아요 취소' : '좋아요' }}
+    </button>
+    </div>
+  </div>
   <div v-if="thread">
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
@@ -14,7 +22,8 @@
     </form>
     <div v-if="thread.comments.length > 0">
       <div v-for="comment in thread.comments" :key="comment.id">
-        <CommentItem :comment="comment" />
+        <CommentItem :comment="comment"/>
+        <hr>
       </div>
     </div>
     <div v-else>
@@ -38,17 +47,31 @@
     const threadId = route.params.threadId
     const thread = computed(() => threadStore.threadDetail)
     const commentModel = ref('')
+    const likeCount = computed(() => {
+      return thread.value && thread.value.like_count !== undefined
+        ? thread.value.like_count
+        : 0
+    })
     
-    onMounted(() => {
-      threadStore.getThreadById(threadId)
+    onMounted(async () => {
+      await threadStore.getThreadById(threadId)
     })
 
-    const onDeleteThread = (threadId) => {
+    const onDeleteThread = () => {
+      if(confirm('이 쓰레드를 삭제하시겠습니까?')){
         threadStore.removeThread(threadId)
+      }
     }
 
     const onUpdateThread = () => {
         router.push({name: 'threadUpdate', params: {threadId}})
+    }
+
+    const likeButton = async () => {
+      const result = await threadStore.likeThread(threadId)
+      // likeThread에서 like_count, liked 반환
+      thread.value.like_count = result.like_count
+      thread.value.liked = result.liked
     }
 
     const onCommentCreate = async () => {

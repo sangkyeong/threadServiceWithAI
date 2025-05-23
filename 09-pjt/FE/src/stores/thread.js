@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
@@ -14,7 +14,7 @@ export const useThreadStore = defineStore('threads', () => {
   const getAllThreads = function(){
     axios({
       method: 'get',
-      url: `${BASE_URL}`
+      url: `${BASE_URL}/`
     })
     .then((res) => {
       threads.value = res.data
@@ -52,6 +52,7 @@ export const useThreadStore = defineStore('threads', () => {
     axios.get(
       `${BASE_URL}/${threadId}/detail/`
     ).then((res) => {
+      console.log(res)
       threadDetail.value = res.data
     })
     .catch((err) => {
@@ -72,40 +73,22 @@ export const useThreadStore = defineStore('threads', () => {
       })
   }
 
- const updateThread = (threadId, { title, content, reading_date }) => {
-  axios.patch(
-     `${BASE_URL}/${threadId}/update/`,
-      {
-        title: title,
-        content: content,
-        reading_date: reading_date,
-      },
-      // {
-      //   headers: {
-      //     Authorization: `Token ${token}`
-      //   }
-      // }
-  ).then((res) => {
-    alert("쓰레드가 수정되었습니다.")
-    router.push({name: 'threads'})
-  })
-  .catch((err) => {
-    console.log(err)
-    errors.value = err.response.data
-  })
-}
-
-const addThreadComment = function(threadId, content){
-  axios.post(
-      `${BASE_URL}/${threadId}/comment/create/`,
+  const updateThread = (threadId, { title, content, reading_date }) => {
+    axios.patch(
+      `${BASE_URL}/${threadId}/update/`,
         {
-          content
+          title: title,
+          content: content,
+          reading_date: reading_date,
         },
-        // headers: {
-        //   Authorization: `Token ${token}`
+        // {
+        //   headers: {
+        //     Authorization: `Token ${token}`
+        //   }
         // }
     ).then((res) => {
-      console.log(res)
+      alert("쓰레드가 수정되었습니다.")
+      router.push({name: 'threads'})
     })
     .catch((err) => {
       console.log(err)
@@ -113,20 +96,46 @@ const addThreadComment = function(threadId, content){
     })
   }
 
-  const removeThreadComment = (threadId) => {
-    axios.delete(
-        `${BASE_URL}/comment/${threadId}/delete/`
-      ).then((res) => {
-        console.log(res)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  const likeThread = async function(threadId){
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/${threadId}/likes/`
+      )
+      return res.data
+    } catch (err) {
+      errors.value = err.response?.data
+      throw err
+    }
+  }
+
+  const addThreadComment = async function(threadId, content){
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/${threadId}/comment/create/`,
+        { content }
+      )
+      return res.data
+    } catch (err) {
+      errors.value = err.response?.data
+      throw err
+    }
+  }
+
+  const removeThreadComment = async (commentId) => {
+      try {
+        const res = await axios.delete(
+          `${BASE_URL}/comment/${commentId}/delete/`
+        )
+        return res.data
+      } catch (err) {
+        errors.value = err.response?.data
+        throw err
+      }
     }
 
   return{
     threads, errors, threadDetail, 
-    getAllThreads, addThreads, getThreadById, removeThread, updateThread,
+    getAllThreads, addThreads, getThreadById, removeThread, updateThread, likeThread,
     addThreadComment, removeThreadComment
   }
 }, { persist: {

@@ -10,9 +10,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ThreadListSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
+    like_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Thread
         fields = '__all__'
+
+    def get_like_count(self, obj):
+        return obj.likes.count()
 
 class ThreadSerializer(serializers.ModelSerializer):
     class Meta:

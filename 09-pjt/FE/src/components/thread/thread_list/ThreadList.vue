@@ -2,7 +2,7 @@
   <div>
     <h1>쓰레드 목록</h1>
     <div>
-      <div v-if="threadStore.threads">
+      <div v-if="threadStore.threads.length > 0">
         <ThreadItem
           v-for="thread in threadStore.threads"
           :key="thread.id"
@@ -10,17 +10,16 @@
         />
       </div>
       <div v-else>
-        <h2>쓰레드가 없습니다.</h2>
+        <p>쓰레드가 없습니다.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
 import { useThreadStore } from '@/stores/thread.js'
-const threads = ref('')
 const threadStore = useThreadStore()
 onMounted(() => {
   threadStore.getAllThreads()

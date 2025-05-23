@@ -23,7 +23,7 @@ from books.models import Book
 @api_view(['GET', 'POST'])
 def thread_list(request):
     if request.method == 'GET':
-        threads = get_list_or_404(Thread)
+        threads = Thread.objects.all()
         serializer = ThreadListSerializer(threads, many=True)
         return Response(serializer.data)
         
@@ -86,22 +86,19 @@ def thread_delete(request, thread_pk):
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
-def likes(request, book_pk, thread_pk):
-    thread = get_object_or_404(Thread, pk=thread_pk)
-
-    user = request.user
-    if user in thread.likes.all():
-        thread.likes.remove(user)
-        liked = False
-    else:
-        thread.likes.add(user)
-        liked = True
-
-    return JsonResponse({
-        'liked': liked,
-        'like_count': thread.likes.count(),
-    })
-    return Response({'msg': '쓰레드가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+def likes(request, thread_pk):
+    thread = Thread.objects.get(pk=thread_pk)
+    if  request.method == 'POST':
+        user = request.user
+        if user in thread.likes.all():
+            thread.likes.remove(user)
+        else:
+            thread.likes.add(user)
+        return Response({
+            "like_count": thread.likes.count(),
+            "liked": user in thread.likes.all()
+            }, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -120,7 +117,7 @@ def create_comment(request, thread_pk):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 # @permission_classes([IsAuthenticated])
 def delete_comment(request, comment_pk):
     try:
