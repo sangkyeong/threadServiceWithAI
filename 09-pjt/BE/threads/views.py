@@ -11,14 +11,10 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import ThreadListSerializer, ThreadSerializer, CommentSerializer
 from .models import Thread, Comment
 from books.models import Book
-
-
-#테스트용
-
-# from .utils import (
-#     generate_image_with_openai,
-#     recommend_books_from_fixture,
-# )
+from .utils import (
+    generate_image_with_openai,
+    recommend_books_from_fixture,
+)
 
 @api_view(['GET', 'POST'])
 def thread_list(request):
@@ -40,7 +36,8 @@ def thread_create(request, book_pk):
         serializer = ThreadSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             # thread = serializer.save(user=request.user, book=book)
-            serializer.save(book=book, user=None)
+            thread = serializer.save(book=book, user=None)
+
             # generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
             
             # if generated_image_path:
@@ -60,11 +57,6 @@ def thread_update(request, thread_pk):
         if serializer.is_valid(raise_exception=True):
             # thread = serializer.save(user=request.user, book=book)
             thread = serializer.save(user=None)
-            # generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
-            
-            # if generated_image_path:
-            #     thread.cover_img = generated_image_path
-            #     thread.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         

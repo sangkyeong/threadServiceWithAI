@@ -35,7 +35,7 @@
             v-for="book in filteredBooks"
             :key="book.id"
           >
-            <BookCard :book="book" :bookId="book.id"/>
+            <BookCard :book="book" :bookId="book.id" :showLink="false"/>
           </div>
         </div>
       </main>

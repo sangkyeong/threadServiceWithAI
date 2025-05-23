@@ -9,6 +9,7 @@
     </div>
   </div>
   <div v-if="thread">
+    <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="imgSize">
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
     <p>읽은 날짜: {{ thread.reading_date }}</p>
@@ -82,5 +83,8 @@
 </script>
 
 <style scoped>
-
+  .imgSize{
+    width: 800px;
+    height: 500px;
+  }
 </style>

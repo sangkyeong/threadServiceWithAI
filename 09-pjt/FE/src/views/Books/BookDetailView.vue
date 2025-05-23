@@ -7,6 +7,7 @@
       </div>
       <div class="col-md-9">
         <h2 class="fw-bold">{{ book.title }}</h2>
+        <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}">쓰레드 작성</RouterLink>
         <p class="mt-3">{{ book.description }}</p>
         <p class="text-muted mb-1">
           {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
@@ -33,7 +34,7 @@
 </template>
 
 <script setup>
-  import { useRoute } from 'vue-router'
+  import { useRoute, RouterLink } from 'vue-router'
   import { ref, onMounted } from 'vue'
   import { useBookStore } from '@/stores/book'
 
