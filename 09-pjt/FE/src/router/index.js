@@ -7,6 +7,7 @@ import ThreadWriteView from '@/views/thread/ThreadWriteView.vue'
 import ThreadUpdateView from '@/views/thread/ThreadUpdateView.vue'
 import BookListView from '@/views/Books/BookListView.vue'
 import BookDetailView from '@/views/Books/BookDetailView.vue'
+import SignupView from '@/views/SignupView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,7 +46,12 @@ const router = createRouter({
       path: '/books/:id',
       name: 'BookDetail',
       component: BookDetailView,
-    }
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignupView
+    },
   ],
 })
 

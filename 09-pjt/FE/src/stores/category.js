@@ -8,14 +8,14 @@ export const useCategoryStore = defineStore('categories', () => {
 
   const fetchCategories  = function () {
     axios({
-      url: `${API_URL}/books`,
+      url: `${API_URL}/categories/`,
       method: 'get',
     })
       .then(res => {
         categories.value = res.data
       })
       .catch(err => {
-        console.error('책 불러오기 실패 확인하세요', err)
+        console.error(err)
       })
   }
 

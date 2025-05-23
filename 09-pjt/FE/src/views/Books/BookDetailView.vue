@@ -35,18 +35,18 @@
 <script setup>
   import { useRoute } from 'vue-router'
   import { ref, onMounted } from 'vue'
-  // import { useBooksStore } from '@/stores/data'
+  import { useBookStore } from '@/stores/book'
 
   const route = useRoute()
   const bookId = route.params.id
-  const booksStore = useBooksStore()
+  const booksStore = useBookStore()
 
   const book = ref({})
 
   onMounted(() => {
-    const foundBook = booksStore.books.find(b => b.pk === parseInt(bookId))
+    const foundBook = booksStore.books.find(b => b.id === parseInt(bookId))
     if (foundBook) {
-      book.value = foundBook.fields
+      book.value = foundBook
     }
   })
 </script>

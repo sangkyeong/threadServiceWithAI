@@ -6,9 +6,9 @@
         <ul class="list-unstyled">
           <li
             v-for="category in categoryStore.categories"
-            :key="category.pk"
-            @click="selectedCategory = category.pk"
-            :class="['px-3 py-2', selectedCategory === category.pk ? 'active-category' : 'text-secondary']"
+            :key="category.id"
+            @click="selectedCategory = category.id"
+            :class="['px-3 py-2', selectedCategory === category.id ? 'active-category' : 'text-secondary']"
             style="cursor: pointer;"
           >
             {{ category.name }}
@@ -58,6 +58,7 @@
   onMounted(() => {
     booksStore.fetchBooks()
     categoryStore.fetchCategories()
+    
   })
 
   const filteredBooks = computed(() => {
@@ -78,5 +79,4 @@
     border-left: 4px solid #ff5656;
     background-color: #1c1c1c;
   }
-
 </style>
