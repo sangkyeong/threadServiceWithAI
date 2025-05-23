@@ -1,5 +1,4 @@
 <template>
-    <h1>ThreadWriteView</h1>
     <ThreadWrite/>
 </template>
 
