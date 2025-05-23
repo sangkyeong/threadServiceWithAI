@@ -1,10 +1,18 @@
 <template>
   <div class="app-wrapper">
     <header class="site-header">
-      <RouterLink to="/" class="logo">Th<span>Read</span></RouterLink>
+      <RouterLink :to="{ name: 'home' }" class="logo">Th<span>Read</span></RouterLink>
       <nav>
-        <RouterLink to="/threads">쓰레드</RouterLink>
-        <RouterLink to="/books">도서 검색</RouterLink>
+        <RouterLink :to="{ name: 'threads' }">쓰레드</RouterLink>
+        <RouterLink :to="{ name: 'books' }">도서 검색</RouterLink>
+
+    <template v-if="accountStore.isLogin">
+      <RouterLink to="/profile">마이페이지</RouterLink>
+      <a href="#" @click.prevent="logoutHandler">로그아웃</a>
+    </template>
+    <template v-else>
+      <RouterLink to="/login">로그인</RouterLink>
+    </template>
       </nav>
     </header>
     <RouterView />
@@ -12,7 +20,17 @@
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useAccountStore } from '@/stores/accounts'
+
+const router = useRouter()
+const accountStore = useAccountStore()
+const user = accountStore.user
+
+const logoutHandler = () => {
+  accountStore.logout()
+  router.push({ name: 'home' })
+}
 </script>
 
 <style scoped>

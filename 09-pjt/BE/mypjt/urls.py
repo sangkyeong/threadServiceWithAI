@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('books/', include('books.urls')),
     path('threads/', include('threads.urls')),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/signup/', include('dj_rest_auth.registration.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('api/accounts/', include('dj_rest_auth.urls')),
+    path('api/accounts/', include('dj_rest_auth.registration.urls')),
+    path('api/accounts/', include('accounts.urls')),
 ]
