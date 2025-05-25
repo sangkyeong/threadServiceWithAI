@@ -136,7 +136,84 @@ class PureRegisterSerializer(serializers.ModelSerializer):
 
         return user
 
+
+class PureUpdateSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(
+        required=True,
+        error_messages={
+            'blank': '이메일을 입력해주세요.',
+            'required': '이메일은 필수 항목입니다.',
+        }
+    )
+
+    gender = serializers.ChoiceField(
+        choices=User.GENDER_CHOICES,
+        required=True,
+        allow_blank=False,
+        error_messages={
+            'required': '성별을 선택해주세요.',
+            'null': '성별을 선택해주세요.',
+            'invalid_choice': '유효한 성별을 선택해주세요.'
+        }
+    )
+    age = serializers.IntegerField(
+        required=True,
+        allow_null=False,
+        error_messages={
+            'required': '나이를 입력해주세요.',
+            'invalid': '나이는 숫자여야 합니다.',
+            'null': '나이를 입력해주세요.'
+        }
+    )
+
+    profile_img = serializers.ImageField(required=False)
+    weekly_avg_reading_time = serializers.IntegerField(required=False)
+    interested_genres = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        many=True,
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'username', 'email',
+            'gender', 'age', 'profile_img', 'weekly_avg_reading_time', 'interested_genres'
+        ]
+        read_only_fields = ('username',)
+
+    def validate(self, data):
+        errors = {}
+
+        # email: 빈 값 체크
+        email = data.get('email')
+        if not email or not email.strip():
+            errors['email'] = ['이메일을 입력해주세요.']
+        elif User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            errors['email'] = ['이미 사용 중인 이메일입니다.']
+
+        # gender: 빈 값 체크
+        gender = data.get('gender')
+        if not gender:
+            errors['gender'] = ['성별을 선택해주세요.']
+
+        # age: 빈 값 체크
+        age = data.get('age')
+        if age is None:
+            errors['age'] = ['나이를 입력해주세요.']
+
+        # 추가 검증 필요시 여기에...
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data
+    
 class UserSerializer(serializers.ModelSerializer):
+    interested_genres_name = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
+    followings_count = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = (
@@ -149,5 +226,19 @@ class UserSerializer(serializers.ModelSerializer):
             'annual_reading_amount',
             'profile_img',
             'interested_genres',
-            'followings',
+            'interested_genres_name',
+            'followings_count',
+            'followers_count',
         )
+
+    def get_interested_genres_name(self, obj):
+        return [genre.name for genre in obj.interested_genres.all()]
+    
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+    
+    def get_followings_count(self, obj):
+        return obj.followings.count()
+
+
+    

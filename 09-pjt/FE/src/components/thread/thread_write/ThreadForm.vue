@@ -9,7 +9,8 @@
         <hr>
         <div>
             <p>내용</p>
-            <input v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
+            <textarea v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
+            </textarea>
         </div>
         <hr>
         <div>

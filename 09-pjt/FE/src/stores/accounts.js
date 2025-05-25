@@ -64,6 +64,29 @@ export const useAccountStore = defineStore(
         });
     };
 
+    // 회원정보 수정
+    const profileUpdate = function (payload) {
+      return axios({
+        method: "patch",
+        url: `${API_URL}/accounts/signup/`,
+        data: payload,
+        headers: {
+            'Authorization': `Token ${token.value}`
+        }
+      })
+        .then((res) => {
+          return axios.get(`${API_URL}/accounts/user/`);
+        })
+        .then((res) => {
+          user.value = res.data;
+          console.log(user.value);
+          // console.log("로그인 성공!! 유저 정보", user.value);
+        })
+        .catch((err) => {
+          throw err; // view 쪽에서 catch해서 alert 띄우자
+        });
+    };
+
     return {
       token,
       user,
@@ -71,6 +94,7 @@ export const useAccountStore = defineStore(
       login,
       logout,
       signup,
+      profileUpdate
     };
   },
   { persist: true }

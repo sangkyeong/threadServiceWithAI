@@ -2,10 +2,10 @@
   <h1>쓰레드 상세</h1>
   <div>
     <h4>♥{{ likeCount }}</h4>
-    <div v-if="thread">
-    <button @click="likeButton">
-      {{ thread.liked ? '좋아요 취소' : '좋아요' }}
-    </button>
+    <div v-if="thread && accountStore.user">
+      <button @click="likeButton">
+        {{ thread.liked ? '좋아요 취소' : '좋아요' }}
+      </button>
     </div>
   </div>
   <div v-if="thread">
@@ -13,18 +13,29 @@
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
     <p>읽은 날짜: {{ thread.reading_date }}</p>
-    <button type="button" @click="onDeleteThread(thread.id)">삭제</button>
-    <button type="button" @click="onUpdateThread(thread.id)">수정</button>
+    <template v-if="accountStore.user && accountStore.user.pk === thread.user ">
+      <button type="button" @click="onDeleteThread(thread.id)">삭제</button>
+      <button type="button" @click="onUpdateThread(thread.id)">수정</button>
+    </template>
     <hr>
     <h3>댓글</h3>
-    <form @submit.prevent="onCommentCreate">
-      <input type="text" placeholder="댓글을 입력하세요." v-model="commentModel">
-      <button type="submit">등록</button>
-    </form>
-    <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
+    <div v-if="accountStore.user">
+      <form @submit.prevent="onCommentCreate">
+        <input type="text" placeholder="댓글을 입력하세요." v-model="commentModel">
+        <button type="submit">등록</button>
+      </form>
+      <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
+    </div>
+    <div v-else>
+      <input type="text" placeholder="로그인 후 입력하세요." readonly="readonly">
+    </div>
     <div v-if="thread.comments && thread.comments.length > 0">
       <div v-for="comment in thread.comments" :key="comment.id">
-        <CommentItem :comment="comment"/>
+        <CommentItem 
+          :comment="comment"
+          :threadUser="thread.user"
+          :loginUser="accountStore.user?.pk"
+        />
         <hr>
       </div>
     </div>
@@ -43,10 +54,12 @@
     import { useRouter, useRoute } from 'vue-router'
     import { useThreadStore } from '@/stores/thread.js'
     import { useUIStore } from '@/stores/ui.js'
+    import { useAccountStore } from '@/stores/accounts.js'
 
     const router = useRouter()
     const route = useRoute()
     const threadStore = useThreadStore()
+    const accountStore = useAccountStore()
     const threadId = route.params.threadId
     const thread = computed(() => threadStore.threadDetail)
     const commentModel = ref('')
