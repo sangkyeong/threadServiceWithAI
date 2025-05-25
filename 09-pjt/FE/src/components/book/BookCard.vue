@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to="`/books/${bookId}`" class="book-card">
+  <RouterLink v-if="showLink" :to="`/books/${bookId}`" class="book-card">
     <img :src="book.cover" alt="book cover" class="book-cover" />
     <div class="book-info">
       <h3 class="book-title">{{ book.title }}</h3>
@@ -9,12 +9,23 @@
       <p class="book-award">{{ book.subTitle }}</p>
     </div>
   </RouterLink>
+  <div v-else class="book-card">
+    <img :src="book.cover" alt="book cover" class="book-cover" />
+    <div class="book-info">
+      <h3 class="book-title">{{ book.title }}</h3>
+      <p class="book-meta">
+        {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
+      </p>
+      <p class="book-award">{{ book.subTitle }}</p>
+    </div>
+  </div>
 </template>
 
 <script setup>
   defineProps({
     book: Object,
-    bookId: [Number, String]
+    bookId: [Number, String],
+    showLink: { type: Boolean, default: true }
   })
 </script>
 

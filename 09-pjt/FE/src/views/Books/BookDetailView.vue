@@ -7,6 +7,7 @@
       </div>
       <div class="col-md-9">
         <h2 class="fw-bold">{{ book.title }}</h2>
+        <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}">쓰레드 작성</RouterLink>
         <p class="mt-3">{{ book.description }}</p>
         <p class="text-muted mb-1">
           {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
@@ -29,24 +30,42 @@
         </div>
       </div>
     </div>
+
+    <hr class="border-secondary" />
+    <div>
+      <h4 class="mb-4">AI 기반 유사 도서 추천</h4>
+      <div class="d-flex gap-4 flex-wrap">
+        <div 
+          v-for="rBook in recommendBooks"
+          class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2"
+          :key="rBook.id"
+        >
+          <BookCard :book="rBook" :bookId="rBook.id"/>
+        </div>    
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { useRoute } from 'vue-router'
-  import { ref, onMounted } from 'vue'
+  import { useRoute, RouterLink } from 'vue-router'
+  import { ref, watch, computed } from 'vue'
   import { useBookStore } from '@/stores/book'
+  import BookCard from '@/components/book/BookCard.vue'
 
   const route = useRoute()
-  const bookId = route.params.id
+  const bookId = computed(() => route.params.id)
   const booksStore = useBookStore()
 
   const book = ref({})
+  const recommendBooks = ref([])
 
-  onMounted(() => {
-    const foundBook = booksStore.books.find(b => b.id === parseInt(bookId))
+  watch(bookId, async (newId) => {
+    const foundBook = booksStore.books.find(b => b.id === parseInt(newId))
     if (foundBook) {
       book.value = foundBook
     }
-  })
+    
+    recommendBooks.value = await booksStore.recommendBooksForAI(newId)
+  }, { immediate: true })
 </script>
