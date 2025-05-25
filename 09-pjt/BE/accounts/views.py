@@ -8,16 +8,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import PureRegisterSerializer
+from .serializers import PureRegisterSerializer, UserSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_info(request):
-    user = request.user
-    return Response({
-        'id': user.id,
-        'username': user.username,
-    })
+    user = UserSerializer(request.user)
+    return Response(user.data)
 
 class SignupView(APIView):
     def post(self, request):

@@ -6,15 +6,15 @@
       <form @submit.prevent="signupHandler">
         <input v-model="username" type="text" placeholder="아이디" class="form-control mb-2" />
         <div v-if="errors.username" class="text-danger small mb-2">{{ errors.username[0] }}</div>
-
-        <input v-model="email" type="email" placeholder="이메일" class="form-control mb-2" />
-        <div v-if="errors.email" class="text-danger small mb-2">{{ errors.email[0] }}</div>
-
+        
         <input v-model="password1" type="password" placeholder="비밀번호" class="form-control mb-2" />
         <div v-if="errors.password1" class="text-danger small mb-2">{{ errors.password1[0] }}</div>
-
+        
         <input v-model="password2" type="password" placeholder="비밀번호 확인" class="form-control mb-2" />
         <div v-if="errors.password2" class="text-danger small mb-2">{{ errors.password2[0] }}</div>
+        
+        <input v-model="email" type="email" placeholder="이메일" class="form-control mb-2" />
+        <div v-if="errors.email" class="text-danger small mb-2">{{ errors.email[0] }}</div>
 
         <select v-model="gender" class="form-select mb-2">
           <option disabled value="">성별 선택</option>
@@ -74,6 +74,7 @@ const signupHandler = () => {
 
   accountStore.signup(payload)
     .then(() => {
+      alert('회원가입이 완료되었습니다!')
       router.push({ name: 'login' })
     })
     .catch(err => {

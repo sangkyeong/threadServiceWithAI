@@ -72,30 +72,6 @@ class PureRegisterSerializer(serializers.ModelSerializer):
             'gender', 'age', 'profile_img', 'weekly_avg_reading_time', 'interested_genres'
         ]
 
-    # def validate_username(self, value):
-    #     if not value.strip():
-    #         raise serializers.ValidationError("아이디를 입력해주세요.")
-    #     if User.objects.filter(username=value).exists():
-    #         raise serializers.ValidationError("이미 사용 중인 아이디입니다.")
-    #     return value
-
-    # # def validate_email(self, value):
-    # #     if not value.strip():
-    # #         raise serializers.ValidationError("이메일을 입력해주세요.")
-    # #     return value
-
-    # def validate_password1(self, value):
-    #     if not value.strip():
-    #         raise serializers.ValidationError("비밀번호를 입력해주세요.")
-    #     if len(value) < 8:
-    #         raise serializers.ValidationError("비밀번호는 8자 이상이어야 합니다.")
-    #     return value
-
-    # def validate(self, data):
-    #     if data['password1'] != data['password2']:
-    #         raise serializers.ValidationError({"password2": "비밀번호가 일치하지 않습니다."})
-    #     return data
-
     def validate(self, data):
         errors = {}
 
@@ -110,6 +86,8 @@ class PureRegisterSerializer(serializers.ModelSerializer):
         email = data.get('email')
         if not email or not email.strip():
             errors['email'] = ['이메일을 입력해주세요.']
+        elif User.objects.filter(email=email).exists():
+            errors['email'] = ['이미 사용 중인 이메일입니다.']
 
         # password1: 빈 값, 길이 체크
         password1 = data.get('password1')
@@ -157,3 +135,19 @@ class PureRegisterSerializer(serializers.ModelSerializer):
             user.interested_genres.set(interested_genres)
 
         return user
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'pk',
+            'username',
+            'email',
+            'gender',
+            'age',
+            'weekly_avg_reading_time',
+            'annual_reading_amount',
+            'profile_img',
+            'interested_genres',
+            'followings',
+        )

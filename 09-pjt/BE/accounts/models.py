@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from books.models import Category
 
 
-         
-
 class User(AbstractUser):
     # 성별
     GENDER_CHOICES = (
