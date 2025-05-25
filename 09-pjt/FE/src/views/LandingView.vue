@@ -1,96 +1,73 @@
 <template>
-    <!-- 2. Hero 섹션 -->
-    <section class="hero-section">
-      <img src="@/assets/hero_image.jpg" alt="Hero Image" class="hero-img" />
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">
-          AI 기반 도서 추천 커뮤니티 서비스
-        </h1>
-        <div class="hero-subtitle">
-          <span>Th</span><span style="color: #fe4a51">Read</span>
-        </div>
+  <div>
+    <HeroSection />
+
+    <section class="bestseller-section">
+      <h2 class="title">베스트셀러</h2>
+      <BookSlider :books="bestsellers" />
+    </section>
+
+    <section class="genre-section">
+      <h2 class="title">장르별 둘러보기</h2>
+      <div class="genre-list">
+        <GenreCard v-for="genre in genres" :key="genre.id" :genre="genre" />
       </div>
     </section>
 
+    <section class="thread-section">
+      <h2 class="title">실시간 추천 글</h2>
+      <div>
+        <ThreadCard v-for="thread in threads" :key="thread.id" :thread="thread" />
+      </div>
+    </section>
+
+  </div>
 </template>
 
 <script setup>
+  import { ref, onMounted } from 'vue'
+  import BookSlider from '@/components/main_page/BookSlider.vue';
+  import GenreCard from '@/components/main_page/GenreCard.vue';
+  import HeroSection from '@/components/main_page/HeroSection.vue';
+  import ThreadCard from '@/components/main_page/ThreadCard.vue';
+
+  const bestsellers = ref([])
+  const genres = ref([])
+  const threads = ref([])
+
+onMounted(async () => {
+  const bookRes = await fetch('/books/books/')
+  bestsellers.value = await bookRes.json()
+
+  const genreRes = await fetch('/books/categories/')
+  genres.value = await genreRes.json()
+
+
+  const threadRes = await fetch('/threads/')
+  threads.value = await threadRes.json()
+})
 
 </script>
 
 <style scoped>
-
-@font-face {
-        font-family: "SBAggro_L";
-        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroL.woff")
-          format("woff");
-        font-weight: normal;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: "GmarketSansMedium";
-        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
-          format("woff");
-        font-weight: normal;
-        font-style: normal;
-      }
-
-      /* Navbar 관련 스타일 */
-      /* 로고 font 설정 */
-      a.navbar-brand {
-        font-family: "GmarketSansMedium";
-      }
-      /* 메뉴 폰트 설정 */
-      .menu-item {
-        font-family: "SBAggro_L";
-      }
-
-      
-
-      /* Hero 섹션 관련 스타일 */
-      .hero-section {
-        min-height: 80vh;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: #fff;
-      }
-      .hero-section img.hero-img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 1;
-      }
-      .hero-overlay {
-        background: rgba(0, 0, 0, 0.5);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-      }
-      .hero-content {
-        position: relative;
-        z-index: 3;
-      }
-      .hero-title {
-        font-family: "GmarketSansTTFMedium";
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        border-radius: 0.2rem;
-        padding: 0 1rem;
-      }
-      .hero-subtitle {
-        font-weight: 700;
-        font-size: 1.5rem;
-      }
-
+  .genre-section, .bestseller-section, .thread-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 48px auto;
+  }
+  .title {
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+    width: 100%; 
+    margin: 60px 0 20px
+  }
+  .genre-list {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
 </style>
