@@ -13,7 +13,7 @@ from .models import Thread, Comment
 from books.models import Book
 from .utils import (
     generate_image_with_openai,
-    recommend_books_from_fixture,
+    comment_openai
 )
 
 @api_view(['GET', 'POST'])
@@ -38,11 +38,11 @@ def thread_create(request, book_pk):
             # thread = serializer.save(user=request.user, book=book)
             thread = serializer.save(book=book, user=None)
 
-            # generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
+            generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
             
-            # if generated_image_path:
-            #     thread.cover_img = generated_image_path
-            #     thread.save()
+            if generated_image_path:
+                thread.cover_img = generated_image_path
+                thread.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -105,8 +105,12 @@ def create_comment(request, thread_pk):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             # serializer.save(thread=thread, user = request.user)
-            serializer.save(thread=thread, user=None)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            commentPass = comment_openai(request.data)
+            if not commentPass:
+                serializer.save(thread=thread, user=None)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])

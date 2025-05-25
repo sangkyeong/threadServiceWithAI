@@ -9,7 +9,7 @@
     </div>
   </div>
   <div v-if="thread">
-    <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="imgSize">
+    <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="imgSize" @error="setDefaultImage">
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
     <p>읽은 날짜: {{ thread.reading_date }}</p>
@@ -21,7 +21,8 @@
       <input type="text" placeholder="댓글을 입력하세요." v-model="commentModel">
       <button type="submit">등록</button>
     </form>
-    <div v-if="thread.comments.length > 0">
+    <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
+    <div v-if="thread.comments && thread.comments.length > 0">
       <div v-for="comment in thread.comments" :key="comment.id">
         <CommentItem :comment="comment"/>
         <hr>
@@ -41,6 +42,7 @@
     import { ref, computed, onMounted } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
     import { useThreadStore } from '@/stores/thread.js'
+    import { useUIStore } from '@/stores/ui.js'
 
     const router = useRouter()
     const route = useRoute()
@@ -48,6 +50,9 @@
     const threadId = route.params.threadId
     const thread = computed(() => threadStore.threadDetail)
     const commentModel = ref('')
+    const isMsg = ref('')
+
+    const uiStore = useUIStore()
     const likeCount = computed(() => {
       return thread.value && thread.value.like_count !== undefined
         ? thread.value.like_count
@@ -56,6 +61,7 @@
     
     onMounted(async () => {
       await threadStore.getThreadById(threadId)
+      threadStore.errors = ''
     })
 
     const onDeleteThread = () => {
@@ -76,9 +82,18 @@
     }
 
     const onCommentCreate = async () => {
-      await threadStore.addThreadComment(threadId, commentModel.value)
-      await threadStore.getThreadById(threadId) // 댓글 등록 후 상세 재조회
-      commentModel.value = '' // 입력창 초기화
+      uiStore.isLoading = true
+      try {
+        await threadStore.addThreadComment(threadId, commentModel.value)
+        await threadStore.getThreadById(threadId) // 댓글 등록 후 상세 재조회
+      }finally{
+            uiStore.isLoading = false
+            commentModel.value = '' // 입력창 초기화
+      }
+    }
+    
+    const setDefaultImage = (e) => {
+      e.target.src = "http://127.0.0.1:8000/static/threads/threadImage.jpg";
     }
 </script>
 

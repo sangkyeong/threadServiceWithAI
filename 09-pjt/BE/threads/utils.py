@@ -65,15 +65,30 @@ def generate_image_with_openai(thread_title, thread_content, book_title, book_au
 
     return None
 
-def recommend_books_from_fixture(target_book, num=3):
-    all_books = Book.objects.exclude(pk=target_book.pk)
+def comment_openai(comment):
+    keyword_extractor_prompt = (
+        f"""
+        {comment} 내용을 읽고, 욕설이 있는지 판단해주세요.
+        상대방이 듣기에 기분 나쁜 말이 있는지도 판단해주세요.
+        수준을 타이트하게 체크해주세요.
+        응답결과는 욕설 등이 있으면 true, 없으면 false를 반환해주세요.
 
-    descriptions = [target_book.description] + [book.description for book in all_books]
-    books_list = list(all_books)
+        답변 : 
+        """
+    )
+    api_key = settings.OPENAI_API_KEY
+    client = openai.OpenAI(api_key=api_key)
+    keyword_extractor_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "당신은 AI커뮤니티 관리자입니다."},
+            {"role": "user", "content": keyword_extractor_prompt},
+        ],
+        max_tokens=2040,
+        temperature=0.5
+    )
+    keyword_extractor_response = keyword_extractor_response.choices[0].message.content
+    
+    print(keyword_extractor_response)
 
-    vectorizer = TfidfVectorizer().fit_transform(descriptions)
-    similarities = cosine_similarity(vectorizer[0:1], vectorizer[1:]).flatten()
-
-    similar_books = sorted(zip(similarities, books_list), key=lambda x: x[0], reverse=True)
-
-    return [book for _, book in similar_books[:num]]
+    return True if keyword_extractor_response == 'true' else False

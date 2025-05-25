@@ -19,9 +19,20 @@ export const useBookStore = defineStore('books', () => {
       })
   }
 
+  const recommendBooksForAI = async (bookId) => {
+    try {
+      const res =  await axios.post(
+        `${DJANGO_URL}/books/${bookId}/recommend/`
+      )
+      return res.data
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
+  }
   
   return{
     books,
-    fetchBooks,
+    fetchBooks, recommendBooksForAI
   }
 }, { persist: true})

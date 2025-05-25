@@ -34,10 +34,13 @@
     import { useRoute, useRouter } from 'vue-router'
     import BookCard from '@/components/book/BookCard.vue'
     import { useBookStore } from '@/stores/book'
+    import { useUIStore } from '@/stores/ui.js'
 
     const route = useRoute()
     const router = useRouter()
     const store = useThreadStore()
+    const uiStore = useUIStore()
+
     const title = ref('')
     const bookId = Number(route.params.bookId)
     const content = ref('')
@@ -46,8 +49,13 @@
     const booksStore = useBookStore()
     const book = computed(() => booksStore.books.find(b => b.id === bookId) || {})
     
-    const onThreadSave = () => {
-        store.addThreads(title.value, bookId, content.value, readDate.value)
+    const onThreadSave = async () => {
+        uiStore.isLoading = true
+        try {
+            await store.addThreads(title.value, bookId, content.value, readDate.value)
+        }finally{
+            uiStore.isLoading = false
+        }
     }
     
     onMounted(() => {

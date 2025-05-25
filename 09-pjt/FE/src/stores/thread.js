@@ -22,8 +22,8 @@ export const useThreadStore = defineStore('threads', () => {
     .catch((err) => console.log(err))
   }
 
-  const addThreads = function(title, bookId, content, reading_date){
-    axios.post(
+  const addThreads = async (title, bookId, content, reading_date) => {
+    return await axios.post(
      `${BASE_URL}/${bookId}/create/`,
       {
         title: title,
@@ -52,7 +52,6 @@ export const useThreadStore = defineStore('threads', () => {
     axios.get(
       `${BASE_URL}/${threadId}/detail/`
     ).then((res) => {
-      console.log(res)
       threadDetail.value = res.data
     })
     .catch((err) => {
