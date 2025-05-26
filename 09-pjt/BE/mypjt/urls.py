@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')), # 웹페이지/커스텀 API
     path('api/accounts/', include('dj_rest_auth.urls')), # API 전용
     path('api/accounts/', include('dj_rest_auth.registration.urls')), # 외부 인증 패키지
+    path('api/books/', include('books.urls')), #  Book 앱 API 경로
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

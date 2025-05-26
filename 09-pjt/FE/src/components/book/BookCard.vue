@@ -1,5 +1,5 @@
 <template>
-  <RouterLink v-if="showLink" :to="`/books/${bookId}`" class="book-card">
+  <RouterLink :to="`/books/${bookId}`" class="book-card">
     <img :src="book.cover" alt="book cover" class="book-cover" />
     <div class="book-info">
       <h3 class="book-title">{{ book.title }}</h3>
@@ -9,16 +9,6 @@
       <p class="book-award">{{ book.subTitle }}</p>
     </div>
   </RouterLink>
-  <div v-else class="book-card">
-    <img :src="book.cover" alt="book cover" class="book-cover" />
-    <div class="book-info">
-      <h3 class="book-title">{{ book.title }}</h3>
-      <p class="book-meta">
-        {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
-      </p>
-      <p class="book-award">{{ book.subTitle }}</p>
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -40,22 +30,29 @@
     align-items: center;
     color: inherit;
     text-decoration: none;
+
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
   }
 
   .book-card:hover {
     color: #ff5656;
+    transform: translateY(-4px);
   }
 
   .book-cover {
-    width: 80px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 5px;
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
   }
 
   .book-info {
     display: flex;
     flex-direction: column;
+    margin-top: 0.75rem;
   }
 
   .book-title {

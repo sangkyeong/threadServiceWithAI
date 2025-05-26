@@ -4,11 +4,12 @@ import axios from 'axios'
 
 export const useBookStore = defineStore('books', () => {
   const books = ref([])
+  const bestsellers = ref([])
   const DJANGO_URL = 'http://127.0.0.1:8000/books'
 
   const fetchBooks = function () {
     axios({
-      url: `${DJANGO_URL}/books`,
+      url: `${DJANGO_URL}/books/`,
       method: 'get',
     })
       .then(res => {
@@ -30,9 +31,14 @@ export const useBookStore = defineStore('books', () => {
       throw err
     }
   }
+
+  const fetchBestsellers = async () => {
+    const res = await axios.get('/api/books/bestsellers/')
+    bestsellers.value = res.data
+  }
   
   return{
-    books,
-    fetchBooks, recommendBooksForAI
+    books, bestsellers,
+    fetchBooks, recommendBooksForAI, fetchBestsellers,
   }
 }, { persist: true})

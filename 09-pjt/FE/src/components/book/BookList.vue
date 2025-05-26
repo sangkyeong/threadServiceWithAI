@@ -5,7 +5,7 @@
       <aside class="col-md-2 bg-dark py-4">
         <ul class="list-unstyled">
           <li
-            v-for="category in categoryStore.categories"
+            v-for="category in categoriesWithAll"
             :key="category.id"
             @click="selectedCategory = category.id"
             :class="['px-3 py-2', selectedCategory === category.id ? 'active-category' : 'text-secondary']"
@@ -23,7 +23,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            class="form-control bg-secondary text-white border-0"
+            class="form-control bg-dark text-white border-0"
             placeholder="검색어를 입력하세요..."
           />
         </div>
@@ -48,18 +48,30 @@
   import { useBookStore } from '@/stores/book'
   import { useCategoryStore } from '@/stores/category'
   import BookCard from './BookCard.vue'
+  import { useRoute } from 'vue-router'
 
   const booksStore = useBookStore()
   const categoryStore = useCategoryStore()
-
+  const route = useRoute()
   const selectedCategory = ref(0)
   const searchQuery = ref('')
+
 
   onMounted(() => {
     booksStore.fetchBooks()
     categoryStore.fetchCategories()
-    
+
+    const categoryFromQuery = Number(route.query.category)
+    if (categoryFromQuery) {
+      selectedCategory.value = categoryFromQuery
+    }
+    window.scrollTo(0, 0)
   })
+
+  const categoriesWithAll = computed(() => [
+  { id: 0, name: '전체' },
+  ...categoryStore.categories
+  ])
 
   const filteredBooks = computed(() => {
     return booksStore.books.filter(book => {
