@@ -1,11 +1,26 @@
 <template>
-    <div class="book-card">
-        <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="book-cover" @error="setDefaultImage">
+    <div class="book-card h-100 m-2 text-white border-0 shadow-sm">
+      <div class="card-body d-flex flex-column justify-content-between">
+        
         <RouterLink 
             :to="{name:'threadDetail', params:{'threadId':thread.id}}" 
+            class="text-decoration-none text-light"
         >
-            {{ thread.title }}
+          <img 
+          :src="`http://127.0.0.1:8000${thread.cover_img}`" 
+            alt="Thread Cover Image" 
+            class="card-img-top mb-2"
+            @error="setDefaultImage" 
+            style="width: 100%; height: 200px; object-fit: cover;"
+          >
+          <h6 class="card-title fw-bold mb-1">{{ thread.title }}</h6>
+          <div class="d-flex justify-content-between align-items-center small text-white-50">
+            <span>{{ thread.writers_name }}</span>
+            <span><i class="bi bi-heart-fill text-danger me-1"></i>{{ thread.like_count }}</span>
+          </div>
+          
         </RouterLink>
+      </div>
     </div>
 </template>
 
@@ -31,10 +46,16 @@
     align-items: center;
     color: inherit;
     text-decoration: none;
+
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
   }
 
   .book-card:hover {
     color: #ff5656;
+    transform: translateY(-4px);
   }
 
   .book-cover {

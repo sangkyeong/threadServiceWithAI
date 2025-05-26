@@ -52,7 +52,7 @@ def thread_update(request, thread_pk):
     thread = Thread.objects.get(pk=thread_pk)
 
     if request.user != thread.user:
-        return Response({'authMsg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'msg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
     
     serializer = ThreadSerializer(thread, data=request.data, partial=True)
     if serializer.is_valid(raise_exception=True):
@@ -112,7 +112,7 @@ def create_comment(request, thread_pk):
         #     serializer.save(thread=thread, user = request.user)
         #     return Response(serializer.data, status=status.HTTP_201_CREATED)
         # else:
-        #     return Response({'msg': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
+        #     return Response({'notice': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
