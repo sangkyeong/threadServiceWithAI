@@ -120,7 +120,7 @@ def create_comment(request, thread_pk):
 def delete_comment(request, comment_pk):
     try:
         comment = Comment.objects.get(pk=comment_pk)
-        if request.user != comment.user:
+        if request.user != comment.user and request.user != comment.thread.user:
             return Response({'msg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
