@@ -73,7 +73,7 @@ def thread_delete(request, thread_pk):
     try:
         thread = Thread.objects.get(pk=thread_pk)
         if request.user != thread.user:
-            return Response({'authMsg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'msg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
     
         thread.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -121,7 +121,7 @@ def delete_comment(request, comment_pk):
     try:
         comment = Comment.objects.get(pk=comment_pk)
         if request.user != comment.user:
-            return Response({'authMsg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'msg': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     except Comment.DoesNotExist:

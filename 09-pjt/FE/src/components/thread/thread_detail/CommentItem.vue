@@ -2,7 +2,7 @@
     <p>{{ comment.content }}</p>
     <template v-if="threadUser === loginUser || loginUser === comment.user">
         <button @click="onCommentRemove(comment.id)">삭제</button>
-        <p class="text-danger small mb-2" v-if="errors.authMsg">{{ errors.authMsg }}</p>
+        <p class="text-danger small mb-2" v-if="errors.msg">{{ errors.msg }}</p>
     </template>
 </template>
 
