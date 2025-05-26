@@ -1,35 +1,38 @@
 <template>
-    <h1>쓰레드 작성</h1>
-    <form @submit.prevent="onThreadSave">
-        <div>
-            <p>제목</p>
-            <input v-model="title" type="text" :placeholder="'제목을 입력하세요.'">
-            <div v-if="errors.title" class="text-danger small mb-2">{{ errors.title[0] }}</div>
-        </div>
-        <hr>
-        <div>
-            <p>내용</p>
-            <textarea v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
-            </textarea>
-            <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
-        </div>
-        <hr>
-        <div>
-            <p>읽은 날짜</p>
-            <input v-model="readDate" type="date" :placeholder="'제목을 입력하세요.'">
-            <div v-if="errors.reading_date" class="text-danger small mb-2">{{ errors.reading_date[0] }}</div>
-        </div>
-        <hr>
-        <div>
-            <p>도서정보</p>
-            <BookCard :book="book" :bookId="bookId" :showLink="false"/>
-        </div>
-        <hr>
-        <button type="button" @click="onCancel">취소</button>
-        <button type="submit">저장</button>
-        <p v-if="store.errors">{{ store.errors }}</p>
-    </form>
+    <div v-if="accountStore.user">
+        <h1>쓰레드 작성</h1>
+        <form @submit.prevent="onThreadSave">
+            <div>
+                <p>제목</p>
+                <input v-model="title" type="text" :placeholder="'제목을 입력하세요.'">
+                <div v-if="errors.title" class="text-danger small mb-2">{{ errors.title[0] }}</div>
+            </div>
+            <hr>
+            <div>
+                <p>내용</p>
+                <textarea v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
+                </textarea>
+                <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
+            </div>
+            <hr>
+            <div>
+                <p>읽은 날짜</p>
+                <input v-model="readDate" type="date" :placeholder="'제목을 입력하세요.'">
+                <div v-if="errors.reading_date" class="text-danger small mb-2">{{ errors.reading_date[0] }}</div>
+            </div>
+            <hr>
+            <div>
+                <p>도서정보</p>
+                <BookCard :book="book" :bookId="bookId" :showLink="false"/>
+            </div>
+            <hr>
+            <button type="button" @click="onCancel">취소</button>
+            <button type="submit">저장</button>
+            <p v-if="store.errors">{{ store.errors }}</p>
+        </form>
+    </div>
 </template>
+
 
 <script setup>
     import { ref, onMounted, computed } from 'vue'
@@ -38,6 +41,9 @@
     import BookCard from '@/components/book/BookCard.vue'
     import { useBookStore } from '@/stores/book'
     import { useUIStore } from '@/stores/ui.js'
+    import { useAccountStore } from '@/stores/accounts'
+
+    const accountStore = useAccountStore()
 
     const route = useRoute()
     const router = useRouter()

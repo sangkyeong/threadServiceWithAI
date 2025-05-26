@@ -53,7 +53,16 @@ const router = createRouter({
     {
       path: '/threads/:bookId/write',
       name: 'threadWrite',
-      component: ThreadWriteView
+      component: ThreadWriteView,
+      beforeEnter: async (to, from, next) => {
+        const accountStore = useAccountStore()
+        if (accountStore.user === null) {
+          alert("잘못된 접근입니다.")
+          next({ name: 'login' })
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/books',
@@ -95,6 +104,15 @@ const router = createRouter({
       path: '/passwordChange',
       name: 'passwordChangeView',
       component: passwordChangeView,
+      beforeEnter: async (to, from, next) => {
+        const accountStore = useAccountStore()
+        if (accountStore.user === null) {
+          alert("잘못된 접근입니다.")
+          next({ name: 'login' })
+        } else {
+          next()
+        }
+      }
     },
   ],
 })

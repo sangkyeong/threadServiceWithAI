@@ -8,7 +8,9 @@
 
       <div class="col-md-9">
         <h2 class="fw-bold">{{ book.title }}</h2>
-        <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}" class="btn btn-outline-primary btn-sm mt-2">쓰레드 작성</RouterLink>
+        <template v-if="accountStore.user">
+          <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}" class="btn btn-outline-primary btn-sm mt-2">쓰레드 작성</RouterLink>
+        </template>
         <p class="mt-3">{{ book.description }}</p>
         <p class="text-muted mb-1">
           {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
@@ -55,6 +57,9 @@ import { useRoute, RouterLink } from 'vue-router'
 import { ref, watch, computed } from 'vue'
 import { useBookStore } from '@/stores/book'
 import BookCard from '@/components/book/BookCard.vue'
+import { useAccountStore } from '@/stores/accounts'
+
+const accountStore = useAccountStore()
 
 const route = useRoute()
 const bookId = computed(() => route.params.id)

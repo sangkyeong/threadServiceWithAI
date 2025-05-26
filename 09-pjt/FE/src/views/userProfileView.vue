@@ -14,7 +14,7 @@
         <strong>팔로워 : </strong><span id="followers-count">{{user.followers_count}}명</span> |
         <strong>팔로잉 : </strong><span id="followings-count">{{user.followings_count}}명</span>
       </p>
-      <div v-if="accountStore.user.username !== user.username">
+      <div v-if="accountStore.user && accountStore.user?.username !== user.username">
         <button @click="followHandler" class="btn btn-info">
           {{ user.is_follow ? '팔로우 취소' : '팔로우' }}
         </button>

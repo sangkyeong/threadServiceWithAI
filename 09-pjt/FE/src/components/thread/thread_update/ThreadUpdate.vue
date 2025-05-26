@@ -1,4 +1,4 @@
-<template>
+<template v-if="accountStore.user">
   <h1>쓰레드 수정</h1>
   <div v-if="accountStore.user.pk === thread.user ">
     <form @submit.prevent="onThreadUpdate">
