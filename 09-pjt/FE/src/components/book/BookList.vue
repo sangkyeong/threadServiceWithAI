@@ -48,17 +48,24 @@
   import { useBookStore } from '@/stores/book'
   import { useCategoryStore } from '@/stores/category'
   import BookCard from './BookCard.vue'
+  import { useRoute } from 'vue-router'
 
   const booksStore = useBookStore()
   const categoryStore = useCategoryStore()
-
+  const route = useRoute()
   const selectedCategory = ref(0)
   const searchQuery = ref('')
+
 
   onMounted(() => {
     booksStore.fetchBooks()
     categoryStore.fetchCategories()
-    
+
+    const categoryFromQuery = Number(route.query.category)
+    if (categoryFromQuery) {
+      selectedCategory.value = categoryFromQuery
+    }
+    window.scrollTo(0, 0)
   })
 
   const categoriesWithAll = computed(() => [

@@ -41,3 +41,8 @@ def book_recommend(request, book_pk):
     serializer = BookListSerializer(recommended_books, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def bestseller_books(request):
+    books = Book.objects.order_by('-customer_review_rank')[:10]
+    serializer = BookListSerializer(books, many=True)
+    return Response(serializer.data)

@@ -3,49 +3,56 @@
         "model": "books.category",
         "pk": 1,
         "fields": {
-            "name": "소설/시/희곡"
+            "name": "소설/시/희곡",
+            "image": "categories_img/literature.png"
         }
     },
     {
         "model": "books.category",
         "pk": 2,
         "fields": {
-            "name": "경제/경영"
+            "name": "경제/경영",
+            "image": "categories_img/economy.png"
         }
     },
     {
         "model": "books.category",
         "pk": 3,
         "fields": {
-            "name": "자기계발"
+            "name": "자기계발",
+            "image": "categories_img/selfdev.png"
         }
     },
     {
         "model": "books.category",
         "pk": 4,
         "fields": {
-            "name": "인문/교양"
+            "name": "인문/교양",
+            "image": "categories_img/humanities.png"
         }
     },
     {
         "model": "books.category",
         "pk": 5,
         "fields": {
-            "name": "취미/실용"
+            "name": "취미/실용",
+            "image": "categories_img/hobby.png"
         }
     },
     {
         "model": "books.category",
         "pk": 6,
         "fields": {
-            "name": "어린이/청소년"
+            "name": "어린이/청소년",
+            "image": "categories_img/children.png"
         }
     },
     {
         "model": "books.category",
         "pk": 7,
         "fields": {
-            "name": "과학"
+            "name": "과학",
+            "image": "categories_img/science.png"
         }
     }
 ]

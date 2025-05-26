@@ -1,35 +1,52 @@
 <template>
     <div class="carousel-wrapper">
       <button class="carousel-btn prev" @click="prevSlide">◀</button>
+
       <div class="carousel-window">
         <div class="carousel-track" :style="trackStyle" @transitionend="handleTransitionEnd">
+
           <!-- 앞 클론 -->
           <div class="carousel-slide" v-if="slideGroups.length > 1">
             <div class="slide-inner">
-              <div v-for="book in slideGroups[slideGroups.length - 1]" :key="book.id" class="book-card text-center">
-                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" />
+              <RouterLink 
+                v-for="book in slideGroups[slideGroups.length - 1]" 
+                :key="book.id" 
+                :to="`/books/${book.id}`"
+                class="book-card text-center"
+              >
+                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" loading="lazy"/>
                 <div class="book-title mt-2">{{ book.title }}</div>
-              </div>
+              </RouterLink>
             </div>
           </div>
   
           <!-- 실제 슬라이드 -->
           <div class="carousel-slide" v-for="(group, idx) in slideGroups" :key="idx">
             <div class="slide-inner">
-              <div v-for="book in group" :key="book.id" class="book-card text-center">
-                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" />
+              <RouterLink 
+                v-for="book in group" 
+                :key="book.id"
+                :to="`/books/${book.id}`"
+                class="book-card text-center"
+              >
+                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" loading="lazy"/>
                 <div class="book-title mt-2">{{ book.title }}</div>
-              </div>
+              </RouterLink>
             </div>
           </div>
   
           <!-- 뒤 클론 -->
           <div class="carousel-slide" v-if="slideGroups.length > 1">
             <div class="slide-inner">
-              <div v-for="book in slideGroups[0]" :key="book.id" class="book-card text-center">
-                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" />
+              <RouterLink 
+                v-for="book in slideGroups[0]" 
+                :key="book.id" 
+                :to="`/books/${book.id}`"
+                class="book-card text-center"
+              >
+                <img :src="book.cover" :alt="book.title" class="img-fluid rounded shadow" loading="lazy"/>
                 <div class="book-title mt-2">{{ book.title }}</div>
-              </div>
+              </RouterLink>
             </div>
           </div>
         </div>
@@ -40,55 +57,63 @@
   
   <script setup>
   import { ref, computed } from "vue";
+  import { RouterLink } from "vue-router";
   
-  const props = defineProps({ books: Array });
-  
-  const books10 = computed(() => props.books.slice(0, 10));
-  const size = 5;
-  const slideGroups = computed(() => {
-    const arr = [];
-    for (let i = 0; i < books10.value.length; i += size) {
-      arr.push(books10.value.slice(i, i + size));
+  const props = defineProps({
+    books: {
+      type: Array,
+      default: () => []
     }
-    return arr;
-  });
+  })
   
-  const current = ref(1);
-  const transitioning = ref(false);
+  const books10 = computed(() => props.books.slice(0, 10))
+  const size = 5
+
+  const slideGroups = computed(() => {
+    const arr = []
+    for (let i = 0; i < books10.value.length; i += size) {
+      arr.push(books10.value.slice(i, i + size))
+    }
+    return arr
+  })
+  
+  const current = ref(1)
+  const transitioning = ref(false)
   
   const trackStyle = computed(() => ({
     transform: `translateX(-${current.value * 100}%)`,
     transition: transitioning.value
-      ? "transform 0.5s cubic-bezier(.77,0,.18,1)"
-      : "none",
-    display: "flex",
-  }));
+      ? 'transform 0.5s cubic-bezier(.77,0,.18,1)'
+      : 'none',
+    display: 'flex',
+  }))
   
   function prevSlide() {
-    if (transitioning.value) return;
-    transitioning.value = true;
-    current.value--;
+    if (transitioning.value) return
+    transitioning.value = true
+    current.value--
   }
+
   function nextSlide() {
-    if (transitioning.value) return;
-    transitioning.value = true;
-    current.value++;
+    if (transitioning.value) return
+    transitioning.value = true
+    current.value++
   }
-  
+
   function handleTransitionEnd() {
     if (current.value === 0) {
-      transitioning.value = false;
-      current.value = slideGroups.value.length;
+      transitioning.value = false
+      current.value = slideGroups.value.length
     } else if (current.value === slideGroups.value.length + 1) {
-      transitioning.value = false;
-      current.value = 1;
+      transitioning.value = false
+      current.value = 1
     } else {
-      transitioning.value = false;
+      transitioning.value = false
     }
   }
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   .carousel-wrapper {
     position: relative;
     width: 100%;
@@ -128,18 +153,29 @@
   }
   
   .book-card {
-    width: 130px;
+    width: 150px;
     margin: 0 8px;
+    text-decoration-line: none;
+  }
+  
+  .book-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
   }
   
   .book-title {
     font-size: 14px;
-    font-weight: 500;
-    display: -webkit-box;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-align: center;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 2.8em;
+    height: 4.5em; /* 줄 수에 맞게 조정 */
+    line-height: 1.5;
+    margin-top: 8px;
   }
   
   .carousel-btn {
@@ -168,5 +204,5 @@
     transform: scale(1.13);
     transition: transform 0.2s;
   }
-  </style>
+</style>
   
