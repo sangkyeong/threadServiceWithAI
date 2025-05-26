@@ -169,6 +169,7 @@ class PureUpdateSerializer(serializers.ModelSerializer):
 
     profile_img = serializers.ImageField(required=False)
     weekly_avg_reading_time = serializers.IntegerField(required=False)
+    annual_reading_amount = serializers.IntegerField(required=False)
     interested_genres = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
         many=True,
@@ -179,7 +180,7 @@ class PureUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username', 'email',
-            'gender', 'age', 'profile_img', 'weekly_avg_reading_time', 'interested_genres'
+            'gender', 'age', 'profile_img', 'weekly_avg_reading_time', 'annual_reading_amount', 'interested_genres'
         ]
         read_only_fields = ('username',)
 
@@ -210,10 +211,21 @@ class PureUpdateSerializer(serializers.ModelSerializer):
 
         return data
     
+    def update(self, instance, validated_data):
+        interested_genres = validated_data.pop('interested_genres', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if interested_genres is not None:
+            instance.interested_genres.set(interested_genres)
+        return instance
+    
 class UserSerializer(serializers.ModelSerializer):
     interested_genres_name = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     followings_count = serializers.SerializerMethodField()
+    gender_display = serializers.CharField(source='get_gender_display', read_only=True)
+    is_follow = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = (
@@ -229,6 +241,8 @@ class UserSerializer(serializers.ModelSerializer):
             'interested_genres_name',
             'followings_count',
             'followers_count',
+            'gender_display',
+            'is_follow',
         )
 
     def get_interested_genres_name(self, obj):
@@ -239,6 +253,83 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_followings_count(self, obj):
         return obj.followings.count()
-
-
     
+    def get_is_follow(self, obj):
+        request = self.context.get('request')
+        if not request:
+            return False  # 로그인 안 한 경우 팔로우 안 한 것으로 처리
+        return obj.followers.filter(pk=request.user.pk).exists()
+
+class passwordSerializer(serializers.ModelSerializer):
+    current_password = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'},
+        error_messages={
+            'blank': '현재 비밀번호를 입력해주세요.',
+            'required': '현재 비밀번호는 필수 항목입니다.',
+        }
+    )
+    password1 = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'},
+        error_messages={
+            'blank': '새 비밀번호를 입력해주세요.',
+            'required': '새 비밀번호는 필수 항목입니다.',
+        }
+    )
+    password2 = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'},
+        error_messages={
+            'blank': '비밀번호 확인을 입력해주세요.',
+            'required': '비밀번호 확인은 필수 항목입니다.',
+        }
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'current_password', 'password1', 'password2',
+        ]
+
+    def validate(self, data):
+        errors = {}
+
+        user = self.context['request'].user
+
+        # 현재 비밀번호 체크
+        current_password = data.get('current_password')
+        if not current_password or not user.check_password(current_password):
+            errors['current_password'] = ['현재 비밀번호가 올바르지 않습니다.']
+
+
+        # password1: 빈 값, 길이 체크
+        password1 = data.get('password1')
+        if not password1 or not password1.strip():
+            errors['password1'] = ['비밀번호를 입력해주세요.']
+        elif len(password1) < 8:
+            errors['password1'] = ['비밀번호는 8자 이상이어야 합니다.']
+
+        # password2: 빈 값 체크
+        password2 = data.get('password2')
+        if not password2 or not password2.strip():
+            errors['password2'] = ['비밀번호 확인을 입력해주세요.']
+
+        # password1, password2 일치 체크 (둘 다 입력된 경우만)
+        if password1 and password2 and password1 != password2:
+            errors['password2'] = ['비밀번호가 일치하지 않습니다.']
+
+        # 추가 검증 필요시 여기에...
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data
+    
+    def save(self, **kwargs):
+        password = self.validated_data.get('password1')
+        user = self.instance
+        user.set_password(password)
+        user.save()
+        return user
+

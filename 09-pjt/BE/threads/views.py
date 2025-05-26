@@ -37,11 +37,12 @@ def thread_create(request, book_pk):
     if serializer.is_valid(raise_exception=True):
         thread = serializer.save(user=request.user, book=book)
         # 스레드 생성형 이미지 제작
-        generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
+        # generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
         
-        if generated_image_path:
-            thread.cover_img = generated_image_path
-            thread.save()
+        # if generated_image_path:
+        #     thread.cover_img = generated_image_path
+        #     thread.save()
+        thread.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,7 +64,6 @@ def thread_update(request, thread_pk):
 @permission_classes([AllowAny])
 def thread_detail(request, thread_pk):
     thread = Thread.objects.get(pk=thread_pk)
-    
     serializer = ThreadListSerializer(thread, context={'user': request.user})
     return Response(serializer.data)
     
@@ -105,12 +105,14 @@ def create_comment(request, thread_pk):
     
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        commentPass = comment_openai(request.data)
-        if not commentPass:
-            serializer.save(thread=thread, user = request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'msg': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(thread=thread, user = request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # commentPass = comment_openai(request.data)
+        # if not commentPass:
+        #     serializer.save(thread=thread, user = request.user)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     return Response({'msg': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
@@ -124,30 +126,3 @@ def delete_comment(request, comment_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     except Comment.DoesNotExist:
         return Response({'msg': '해당 댓글이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
-
-
-# # articles/views.py
-# @api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
-# def article_list(request):
-#     if request.method == 'GET':
-#         articles = get_list_or_404(Thread)
-#         serializer = ArticleListSerializer(articles, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = ArticleSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save(user=request.user)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# @api_view(['GET'])
-# def article_detail(request, article_pk):
-#     article = get_object_or_404(Thread, pk=article_pk)
-
-#     if request.method == 'GET':
-#         serializer = ArticleSerializer(article)
-#         print(serializer.data)
-#         return Response(serializer.data)
-

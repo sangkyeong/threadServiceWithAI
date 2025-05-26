@@ -7,6 +7,7 @@
         {{ thread.liked ? '좋아요 취소' : '좋아요' }}
       </button>
     </div>
+    <p>작성자: <RouterLink :to="{name:'userProfile', params:{userName:thread?.writers_name}}">{{ thread?.writers_name }}</RouterLink></p>
   </div>
   <div v-if="thread">
     <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="imgSize" @error="setDefaultImage">
@@ -23,6 +24,7 @@
       <form @submit.prevent="onCommentCreate">
         <input type="text" placeholder="댓글을 입력하세요." v-model="commentModel">
         <button type="submit">등록</button>
+        <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
       </form>
       <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
     </div>
@@ -63,7 +65,7 @@
     const threadId = route.params.threadId
     const thread = computed(() => threadStore.threadDetail)
     const commentModel = ref('')
-    const isMsg = ref('')
+    const errors = ref({})
 
     const uiStore = useUIStore()
     const likeCount = computed(() => {
@@ -89,19 +91,22 @@
 
     const likeButton = async () => {
       const result = await threadStore.likeThread(threadId)
-      // likeThread에서 like_count, liked 반환
       thread.value.like_count = result.like_count
       thread.value.liked = result.liked
     }
 
     const onCommentCreate = async () => {
       uiStore.isLoading = true
+      errors.value = {}
+
       try {
         await threadStore.addThreadComment(threadId, commentModel.value)
+        commentModel.value = '' // 입력창 초기화
         await threadStore.getThreadById(threadId) // 댓글 등록 후 상세 재조회
-      }finally{
-            uiStore.isLoading = false
-            commentModel.value = '' // 입력창 초기화
+      } catch (err) {
+        errors.value = err.response?.data || {}
+      } finally {
+        uiStore.isLoading = false
       }
     }
     

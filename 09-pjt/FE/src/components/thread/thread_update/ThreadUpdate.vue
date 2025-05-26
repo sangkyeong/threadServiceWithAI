@@ -5,14 +5,17 @@
       <div>
         <p>제목</p>
         <input v-model="title" type="text" placeholder="제목을 입력하세요." />
+        <div v-if="errors.title" class="text-danger small mb-2">{{ errors.title[0] }}</div>
       </div>
       <div>
         <p>내용</p>
         <input v-model="content" type="text" placeholder="내용을 입력하세요." />
+        <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
       </div>
       <div>
         <p>읽은 날짜</p>
         <input v-model="readDate" type="date" />
+        <div v-if="errors.reading_date" class="text-danger small mb-2">{{ errors.reading_date[0] }}</div>
       </div>
       <div>
         <p>도서정보</p>
@@ -42,6 +45,7 @@
     const title = ref('')
     const content = ref('')
     const readDate = ref('')
+    const errors = ref({})
     
     const booksStore = useBookStore()
     const bookId = Number(route.params.threadId)
@@ -55,12 +59,16 @@
       threadStore.errors = ''
     })
 
-    const onThreadUpdate = () => {
-      threadStore.updateThread(route.params.threadId, {
-          title: title.value,
-          content: content.value,
-          reading_date: readDate.value,
-      })
+    const onThreadUpdate = async () => {
+      try {
+          await threadStore.updateThread(route.params.threadId, {
+            title: title.value,
+            content: content.value,
+            reading_date: readDate.value,
+         })
+      } catch (err) {
+        errors.value = err.response?.data || {}
+      }
     }
 
     const onCancel = () => {

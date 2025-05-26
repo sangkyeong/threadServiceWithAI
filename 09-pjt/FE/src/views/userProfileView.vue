@@ -1,17 +1,24 @@
 <template>
   <div class="container py-5" v-if="user">
-    <h2>마이페이지</h2>
-    <div v-if="!user.profile_img">
-      <img src="@/assets/profile.png" alt="profileImage" class="profile" />
-    </div>
-    <div v-else>
-      <img :src="`${user.profile_img}`" alt="profileImage" class="profile" />
+    <div>
+      <template v-if="!user.profile_img">
+        <img src="@/assets/profile.png" alt="profileImage" class="profile" />
+      </template>
+      <template v-else>
+        <img :src="`${user.profile_img}`" alt="profileImage" class="profile" />
+      </template>
+      <strong>{{ user.username }}</strong>
     </div>
     <div class="me-auto">
       <p>
         <strong>팔로워 : </strong><span id="followers-count">{{user.followers_count}}명</span> |
         <strong>팔로잉 : </strong><span id="followings-count">{{user.followings_count}}명</span>
       </p>
+      <div v-if="accountStore.user.username !== user.username">
+        <button @click="followHandler" class="btn btn-info">
+          {{ user.is_follow ? '팔로우 취소' : '팔로우' }}
+        </button>
+      </div>
     </div>
     <p><strong>아이디:</strong> {{ user.username }}</p>
     <p><strong>이메일:</strong> {{ user.email }}</p>
@@ -25,32 +32,28 @@
         <li>{{ genre }}</li>
       </div>
     </ul>
-    <button class="btn btn-primary" @click="updateHandler">프로필 편집</button>
-    <button class="btn btn-danger" @click="logoutHandler">로그아웃</button>
   </div>
 </template>
 
 <script setup>
 import { useAccountStore } from '@/stores/accounts'
-import { useRouter } from 'vue-router'
-import { onMounted, ref} from 'vue'
+import { useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
 
 const accountStore = useAccountStore()
-const router = useRouter()
+const route = useRoute()
 
 const user = ref(null)
+const isFollowClass = ref(user.is_follow ? 'info':'danger')
+
 
 onMounted(async ()=> {
-  user.value = await accountStore.getUser(accountStore.user.username)
+  user.value = await accountStore.getUser(route.params.userName)
 })
 
-const logoutHandler = () => {
-  accountStore.logout()
-  router.push({ name: 'home' })
-}
-
-const updateHandler = () => {
-  router.push({ name: 'ProfileUpdateView' })
+const followHandler = async () => {
+  await accountStore.follow(user.value.pk)
+  user.value = await accountStore.getUser(route.params.userName)
 }
 </script>
 

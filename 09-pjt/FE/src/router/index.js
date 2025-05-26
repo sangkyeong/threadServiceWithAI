@@ -13,6 +13,8 @@ import SignupView from '@/views/SignupView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import ProfileUpdate from '@/views/ProfileUpdate.vue'
+import userProfileView from '@/views/userProfileView.vue'
+import passwordChangeView from '@/views/PasswordChangeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,13 +78,23 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      meta: { requiresAuth: true },
-      component: ProfileView,
+      component: ProfileView
+    },
+    {
+      path: '/profile/:userName',
+      name: 'userProfile',
+      component: userProfileView,
+      props: true
     },
     {
       path: '/profileUpdate',
       name: 'ProfileUpdateView',
       component: ProfileUpdate,
+    },
+    {
+      path: '/passwordChange',
+      name: 'passwordChangeView',
+      component: passwordChangeView,
     },
   ],
 })

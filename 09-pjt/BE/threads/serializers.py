@@ -3,15 +3,36 @@ from .models import Thread, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    content = serializers.CharField(
+        error_messages={
+            'blank': '댓글을 입력해주세요.',
+            'required': '댓글은 필수 항목입니다.',
+        }
+    )
+
     class Meta:
         model = Comment
         fields = '__all__'
         read_only_fields = ('user', 'thread')
+    
+    def validate(self, data):
+        errors = {}
+        
+        content = data.get('content')
+        if not content or not content.strip():
+            errors['content'] = ['댓글을 입력해주세요.']
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data
 
 class ThreadListSerializer(serializers.ModelSerializer):
+
     comments = CommentSerializer(many=True, read_only=True)
     like_count = serializers.SerializerMethodField()
     liked = serializers.SerializerMethodField()
+    writers_name = serializers.SerializerMethodField()
     
     class Meta:
         model = Thread
@@ -25,23 +46,53 @@ class ThreadListSerializer(serializers.ModelSerializer):
         if user:
             return user in obj.likes.all()
         return False
+    
+    def get_writers_name(self, obj):
+        return obj.user.username
 
 class ThreadSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(
+        error_messages={
+            'blank': '제목을 입력해주세요.',
+            'required': '제목은 필수 항목입니다.',
+        }
+    )
+
+    content = serializers.CharField(
+        error_messages={
+            'blank': '내용을 입력해주세요.',
+            'required': '내용은 필수 항목입니다.',
+        }
+    )
+
+    reading_date = serializers.CharField(
+        error_messages={
+            'blank': '읽은 날짜를 입력해주세요.',
+            'required': '읽은 날짜는 필수 항목입니다.',
+        }
+    )
+
     class Meta:
         model = Thread
         fields = ('title', 'content', 'reading_date')
-        read_only_fields = ('user',)
+        read_only_fields = ('user',)    
 
-# articles/serializers.py
-# class ArticleListSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Thread
-#         fields = ('id', 'title', 'content')
+    def validate(self, data):
+        errors = {}
+        
+        title = data.get('title')
+        if not title or not title.strip():
+            errors['title'] = ['제목을 입력해주세요.']
 
+        content = data.get('content')
+        if not content or not content.strip():
+            errors['content'] = ['내용을 입력해주세요.']
 
-# # articles/serializers.py
-# class ArticleSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Thread
-#         fields = '__all__'
-#         read_only_fields = ('user',)
+        reading_date = data.get('reading_date')
+        if not reading_date or not reading_date.strip():
+            errors['reading_date'] = ['읽은 날짜를 입력해주세요.']
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data

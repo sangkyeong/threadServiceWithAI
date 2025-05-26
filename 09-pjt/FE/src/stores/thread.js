@@ -22,7 +22,10 @@ export const useThreadStore = defineStore('threads', () => {
     .then((res) => {
       threads.value = res.data
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err) 
+      throw err
+    })
   }
 
   const addThreads = async (title, bookId, content, reading_date) => {
@@ -44,7 +47,7 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       console.log(err)
-      errors.value = err.response.data
+      throw err
     })
   }
 
@@ -63,6 +66,7 @@ export const useThreadStore = defineStore('threads', () => {
     .catch((err) => {
       threadDetail.value = null
       console.log(err)
+      throw err
     })
   }
 
@@ -80,11 +84,12 @@ export const useThreadStore = defineStore('threads', () => {
       })
       .catch((err) => {
         console.log(err)
+        throw err
       })
   }
 
-  const updateThread = (threadId, { title, content, reading_date }) => {
-    axios.patch(
+  const updateThread = async (threadId, { title, content, reading_date }) => {
+    return await axios.patch(
       `${BASE_URL}/${threadId}/update/`,
         {
           title: title,
@@ -102,7 +107,7 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       console.log(err)
-      errors.value = err.response.data
+      throw err
     })
   }
 
@@ -119,18 +124,16 @@ export const useThreadStore = defineStore('threads', () => {
       )
       return res.data
     } catch (err) {
-      errors.value = err.response?.data
+      console.log(err)
       throw err
     }
   }
 
-  const addThreadComment = async function(threadId, content){
+  const addThreadComment = async (threadId, content) => {
     try {
       const res = await axios.post(
         `${BASE_URL}/${threadId}/comment/create/`,
-        {
-          content
-        },
+        {content},
         {
           headers: {
             'Authorization': `Token ${token.value}`
@@ -139,7 +142,7 @@ export const useThreadStore = defineStore('threads', () => {
       )
       return res.data
     } catch (err) {
-      errors.value = err.response?.data
+      console.log(err)
       throw err
     }
   }
@@ -156,8 +159,8 @@ export const useThreadStore = defineStore('threads', () => {
         )
         return res.data
       } catch (err) {
-        errors.value = err.response?.data
-        throw err
+        console.log(err)
+      throw err
       }
     }
 
