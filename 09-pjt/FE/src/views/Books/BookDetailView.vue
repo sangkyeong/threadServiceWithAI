@@ -1,5 +1,6 @@
 <template>
-  <div class="container text-muted py-5" v-if="book.title">
+  <div class="container-fluid bg-dark text-white py-5" v-if="book.title">
+    <div class="container">
     <!-- 메인 정보 -->
     <div class="row mb-5">
       <div class="col-md-3">
@@ -23,13 +24,19 @@
     </div>
 
     <!-- 작가 정보 -->
+    <!-- 작가 정보가 중앙이 별로면 text-center 지우기 -->
     <hr class="border-secondary" />
     <div>
-      <h4 class="mb-4">작가 정보</h4>
+      <h3 class="mb-4 text-center">작가 정보</h3>
       <div class="d-flex align-items-start gap-4">
-        <img :src="book.author_photo" alt="Author Image" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+        <img 
+          :src="book.author_photo || 'http://127.0.0.1:8000/static/default_author_img/default_author.jpg'" 
+          alt="Author Image" 
+          class="rounded-circle" 
+          style="width: 100px; height: 100px; object-fit: cover;" 
+        />
         <div>
-          <p class="mb-1 fw-bold">{{ book.author }}</p>
+          <p class="mb-1 fw-bold" style="font-size: 24px;">{{ book.author }}</p>
           <p>{{ book.author_info }}</p>
         </div>
       </div>
@@ -37,9 +44,10 @@
 
     <!-- 유사 도서 추천 -->
     <hr class="border-secondary" />
+    
     <div>
-      <h4 class="mb-4">AI 기반 유사 도서 추천</h4>
-      <div class="row gx-4 gy-4 justify-content-start">
+      <h3 class="mb-4 text-center">AI 기반 유사 도서 추천</h3>
+      <div class="row gx-4 gy-4 justify-content-center text-center">
         <div 
           v-for="rBook in recommendBooks"
           :key="rBook.id"
@@ -50,6 +58,8 @@
       </div>
     </div>
   </div>
+</div>
+
 </template>
 
 <script setup>
@@ -67,6 +77,8 @@ const booksStore = useBookStore()
 
 const book = ref({})
 const recommendBooks = ref([])
+
+
 
 watch(bookId, async (newId) => {
   const foundBook = booksStore.books.find(b => b.id === parseInt(newId))
