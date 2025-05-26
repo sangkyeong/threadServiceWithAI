@@ -148,20 +148,20 @@ export const useThreadStore = defineStore('threads', () => {
   }
 
   const removeThreadComment = async (commentId) => {
-      try {
-        const res = await axios.delete(
+      return await axios.delete(
           `${BASE_URL}/comment/${commentId}/delete/`,
         {
           headers: {
             'Authorization': `Token ${token.value}`
           }
         }
-        )
-        return res.data
-      } catch (err) {
-        console.log(err)
-      throw err
-      }
+        ).then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+          throw err
+        })
     }
 
   return{

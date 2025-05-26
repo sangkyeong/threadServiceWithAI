@@ -7,7 +7,9 @@
         {{ thread.liked ? '좋아요 취소' : '좋아요' }}
       </button>
     </div>
-    <p>작성자: <RouterLink :to="{name:'userProfile', params:{userName:thread?.writers_name}}">{{ thread?.writers_name }}</RouterLink></p>
+    <template v-if="thread?.writers_name">
+      <p>작성자: <RouterLink :to="{name:'userProfile', params:{'userName':thread?.writers_name}}">{{ thread?.writers_name }}</RouterLink></p>
+    </template>
   </div>
   <div v-if="thread">
     <img :src="`http://127.0.0.1:8000${thread.cover_img}`" alt="Thread Cover Image" class="imgSize" @error="setDefaultImage">
@@ -25,6 +27,7 @@
         <input type="text" placeholder="댓글을 입력하세요." v-model="commentModel">
         <button type="submit">등록</button>
         <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
+        <div v-if="errors.authMsg" class="text-danger small mb-2">{{ errors.authMsg[0] }}</div>
       </form>
       <p v-if="threadStore.errors">{{ threadStore.errors }}</p>
     </div>
@@ -90,9 +93,13 @@
     }
 
     const likeButton = async () => {
-      const result = await threadStore.likeThread(threadId)
-      thread.value.like_count = result.like_count
-      thread.value.liked = result.liked
+      try {
+        const result = await threadStore.likeThread(threadId)
+        thread.value.like_count = result.like_count
+        thread.value.liked = result.liked
+      } catch (err) {
+        errors.value = err.response?.data || {}
+      }
     }
 
     const onCommentCreate = async () => {
