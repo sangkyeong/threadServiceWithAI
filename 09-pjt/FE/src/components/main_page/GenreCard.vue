@@ -7,7 +7,7 @@
         :to="{ name: 'books', query: { category: genre.id } }"
         class="genre-card"
       >
-        <img :src="`http://localhost:8000${genre.image}`" :alt="genre.name" />
+        <img :src="`http://127.0.0.1:8000/static/${genre.image}`" :alt="genre.name" />
         <div class="genre-name">{{ genre.name }}</div>
       </RouterLink>
     </div>
