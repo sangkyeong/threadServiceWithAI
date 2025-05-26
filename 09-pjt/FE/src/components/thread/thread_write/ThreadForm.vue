@@ -4,17 +4,20 @@
         <div>
             <p>제목</p>
             <input v-model="title" type="text" :placeholder="'제목을 입력하세요.'">
-            
+            <div v-if="errors.title" class="text-danger small mb-2">{{ errors.title[0] }}</div>
         </div>
         <hr>
         <div>
             <p>내용</p>
-            <input v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
+            <textarea v-model="content" type="text" :placeholder="'내용을 입력하세요.'">
+            </textarea>
+            <div v-if="errors.content" class="text-danger small mb-2">{{ errors.content[0] }}</div>
         </div>
         <hr>
         <div>
             <p>읽은 날짜</p>
             <input v-model="readDate" type="date" :placeholder="'제목을 입력하세요.'">
+            <div v-if="errors.reading_date" class="text-danger small mb-2">{{ errors.reading_date[0] }}</div>
         </div>
         <hr>
         <div>
@@ -40,6 +43,7 @@
     const router = useRouter()
     const store = useThreadStore()
     const uiStore = useUIStore()
+    const errors = ref({})
 
     const title = ref('')
     const bookId = Number(route.params.bookId)
@@ -53,7 +57,9 @@
         uiStore.isLoading = true
         try {
             await store.addThreads(title.value, bookId, content.value, readDate.value)
-        }finally{
+        } catch (err) {
+            errors.value = err.response?.data || {}
+        } finally{
             uiStore.isLoading = false
         }
     }

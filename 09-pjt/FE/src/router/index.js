@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
 import { useAccountStore } from '@/stores/accounts'
+import { useThreadStore } from '@/stores/thread'
 
 import ThreadsListView from '@/views/thread/ThreadListView.vue'
 import ThreadDetailView from '@/views/thread/ThreadDetailView.vue'
@@ -11,6 +12,9 @@ import BookDetailView from '@/views/Books/BookDetailView.vue'
 import SignupView from '@/views/SignupView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import ProfileUpdate from '@/views/ProfileUpdate.vue'
+import userProfileView from '@/views/userProfileView.vue'
+import passwordChangeView from '@/views/PasswordChangeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,7 +37,18 @@ const router = createRouter({
     {
       path: '/threads/:threadId/update',
       name: 'threadUpdate',
-      component: ThreadUpdateView
+      component: ThreadUpdateView,
+      beforeEnter: async (to, from, next) => {
+        const threadStore = useThreadStore()
+        const accountStore = useAccountStore()
+        await threadStore.getThreadById(to.params.threadId)
+        if (accountStore.user.pk !== threadStore.threadDetail.user) {
+          alert("잘못된 접근입니다.")
+          next({ name: 'threads' })
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/threads/:bookId/write',
@@ -63,8 +78,23 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      meta: { requiresAuth: true },
-      component: ProfileView,
+      component: ProfileView
+    },
+    {
+      path: '/profile/:userName',
+      name: 'userProfile',
+      component: userProfileView,
+      props: true
+    },
+    {
+      path: '/profileUpdate',
+      name: 'ProfileUpdateView',
+      component: ProfileUpdate,
+    },
+    {
+      path: '/passwordChange',
+      name: 'passwordChangeView',
+      component: passwordChangeView,
     },
   ],
 })

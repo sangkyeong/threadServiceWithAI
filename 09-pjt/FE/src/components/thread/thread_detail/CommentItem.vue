@@ -1,6 +1,8 @@
 <template>
     <p>{{ comment.content }}</p>
-    <button @click="onCommentRemove(comment.id)">삭제</button>
+    <template v-if="threadUser === loginUser || loginUser === comment.user">
+        <button @click="onCommentRemove(comment.id)">삭제</button>
+    </template>
 </template>
 
 <script setup>
@@ -11,7 +13,9 @@
     const threadId = route.params.threadId
 
     defineProps({
-        comment : Object
+        comment : Object,
+        threadUser: Number,
+        loginUser: Number
     })
 
     const onCommentRemove = async (commentId) => {
