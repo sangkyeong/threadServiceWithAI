@@ -1,29 +1,32 @@
 <template>
-  <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card p-4 shadow" style="max-width: 500px; width: 100%;">
-      <h2 class="text-center mb-4">회원가입</h2>
+  <div class="container-fluid bg-dark text-white py-5 min-vh-100 d-flex justify-content-center align-items-start">
+    <div class="w-100" style="max-width: 32rem;">
+      <h1 class="text-white text-center fw-bold mb-4">회원가입</h1>
+      <div class="card bg-secondary text-white shadow-lg p-5 rounded-4">
+
+      <!-- 텍스트 창 크면 form-control-lg 삭제  -->
 
       <form @submit.prevent="signupHandler">
-        <input v-model="username" type="text" placeholder="아이디" class="form-control mb-2" />
+        <input v-model="username" type="text" placeholder="아이디" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
         <div v-if="errors.username" class="text-danger small mb-2">{{ errors.username[0] }}</div>
         
-        <input v-model="password1" type="password" placeholder="비밀번호" class="form-control mb-2" />
+        <input v-model="password1" type="password" placeholder="비밀번호" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
         <div v-if="errors.password1" class="text-danger small mb-2">{{ errors.password1[0] }}</div>
         
-        <input v-model="password2" type="password" placeholder="비밀번호 확인" class="form-control mb-2" />
+        <input v-model="password2" type="password" placeholder="비밀번호 확인" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
         <div v-if="errors.password2" class="text-danger small mb-2">{{ errors.password2[0] }}</div>
         
-        <input v-model="email" type="email" placeholder="이메일" class="form-control mb-2" />
+        <input v-model="email" type="email" placeholder="이메일" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
         <div v-if="errors.email" class="text-danger small mb-2">{{ errors.email[0] }}</div>
 
-        <select v-model="gender" class="form-select mb-2">
+        <select v-model="gender" class="form-select form-control-lg mb-2" :class="{ 'is-invalid': errors.username }">
           <option disabled value="">성별 선택</option>
           <option value="M">남성</option>
           <option value="F">여성</option>
         </select>
         <div v-if="errors.gender" class="text-danger small mb-2">{{ errors.gender[0] }}</div>
 
-        <input v-model.number="age" type="number" min="1" placeholder="나이" class="form-control mb-3" />
+        <input v-model.number="age" type="number" min="1" placeholder="나이" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
         <div v-if="errors.age" class="text-danger small mb-2">{{ errors.age[0] }}</div>
 
         <label class="form-label fw-bold">관심 장르</label>
@@ -35,10 +38,11 @@
         </div>
         <div v-if="errors.interested_genres" class="text-danger small mb-2">{{ errors.interested_genres[0] }}</div>
 
-        <button class="btn btn-primary w-100 mt-4">가입하기</button>
+        <button class="btn btn-primary btn-lg w-100 rounded mt-3">가입하기</button>
       </form>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>

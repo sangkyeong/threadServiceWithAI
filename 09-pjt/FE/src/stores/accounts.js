@@ -161,5 +161,9 @@ export const useAccountStore = defineStore(
       passwordChange
     };
   },
-  { persist: true }
+  {
+    persist: {
+      paths: ['user'],
+    }
+  }
 );

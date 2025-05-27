@@ -1,53 +1,45 @@
 <template>
-  
-  <div class="container-fluid bg-dark text-white py-5 min-vh-100 d-flex justify-content-center align-items-center" v-if="user">
-    <div class="d-flex justify-content-center">
-      <div class="card bg-secondary text-white p-4" style="width: 30rem;">
+  <div class="container-fluid bg-dark text-white py-4 min-vh-100 d-flex justify-content-center align-items-start" v-if="user">
+    <div class="w-100" style="max-width: 32rem;">
+      <h1 class="text-white text-center fw-bold mb-4">마이페이지</h1>
+      <div class="card bg-secondary text-white shadow-lg p-5 rounded-4">
 
-        <div class="text-center">
-          <h2>마이페이지</h2>
+        <div class="text-center mb-4">
           <div v-if="!user.profile_img">
-            <img src="@/assets/profile.png" alt="profileImage" class="profile" style="border-radius: 8px;"/>
+            <img src="@/assets/profile.png" alt="profileImage" class="profile-img mb-3 rounded-circle border border-light"/>
           </div>
           <div v-else>
-            <img :src="`${user.profile_img}`" alt="profileImage" class="profile" />
+            <img :src="`${user.profile_img}`" alt="profileImage" class="profile-img mb-3 rounded-circle border border-light"/>
           </div>
-          <h4 class="fw-bold">{{ user.username }}</h4>
-          <p>{{ user.email }}</p>
-          <p>{{ user.gender_display }} / {{ user.age }}세</p>
         </div>
 
-        <hr class="border-light" />
-
         <!-- 팔로우 정보 -->
-        <div class="mb-3">
+        <div class="mb-3 text-center">
           <span><strong>팔로워:</strong> {{ user.followers_count }}명</span> |
           <span><strong>팔로잉:</strong> {{ user.followings_count }}명</span>
         </div>
 
-        <!-- 독서 정보 회원가입에 추가할 것인가 말 것인가 -->
         <div class="mb-3">
-          <p><strong>주간 평균 독서 시간:</strong> {{ user.weekly_avg_reading_time }}</p>
-          <p><strong>연간 독서량:</strong> {{ user.annual_reading_amount }}</p>
+          <p><strong>아이디:</strong> {{ user.username }}</p>
+          <p><strong>이메일:</strong> {{ user.email }}</p>
+          <p><strong>성별:</strong> {{ user.gender_display }}</p>
+          <p><strong>나이:</strong> {{ user.age }}세</p>
+          <p><strong>주간 평균 독서 시간:</strong> {{ user.weekly_avg_reading_time }}시간</p>
+          <p><strong>연간 독서량:</strong> {{ user.annual_reading_amount }}권</p>
+          <p><strong>관심 장르</strong></p>
+          <div class="d-flex flex-wrap gap-2">
+            <span v-for="genre in user.interested_genres_name" :key="genre" class="badge rounded-pill bg-light text-dark px-3 py-2">
+              {{ genre }}
+            </span>
+          </div>
         </div>
 
-        <!-- 관심 장르 -->
-        <div class="mb-3">
-          <p><strong>관심 장르:</strong></p>
-          <ul class="list-unstyled ms-3">
-            <li v-for="genre in user.interested_genres_name" :key="genre">📚 {{ genre }}</li>
-          </ul>
-        </div>
-      
-        <!-- 버튼 -->
-        <div class="d-flex justify-content-between">
-          <button class="btn btn-outline-light w-50 me-2" @click="updateHandler">프로필 편집</button>
-          <button class="btn btn-danger w-50" @click="logoutHandler">로그아웃</button>
-        </div>
+
+        <button class="btn btn-primary btn-lg w-100 rounded mt-2" @click="updateHandler">프로필 편집</button>
+        <button class="btn btn-danger btn-lg w-100 rounded mt-2" @click="logoutHandler">로그아웃</button>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -75,8 +67,12 @@ const updateHandler = () => {
 </script>
 
 <style scoped>
-  .profile {
-    width: 200px;
+  .profile-img {
+    width: 200px;  
     height: 200px;
+    object-fit: contain; 
+    background-color: white;
   }
+
+  
 </style>
