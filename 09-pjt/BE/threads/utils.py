@@ -45,9 +45,9 @@ def generate_image_with_openai(thread_title, thread_content, book_title, book_au
     print(img_generator_prompt)
 
     response = client.images.generate(
-        model="dall-e-3",
+        model="dall-e-2",
         prompt=img_generator_prompt,
-        size="1792x1024",
+        size="512x512",
         quality="standard",
         n=1,
     )

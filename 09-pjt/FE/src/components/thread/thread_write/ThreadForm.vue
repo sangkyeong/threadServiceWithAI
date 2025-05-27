@@ -15,7 +15,13 @@
                     <hr>
                     <div>
                         <h3 class="mb-3">내용</h3>
-                        <textarea v-model="content" class="form-control mb-2" type="text" :placeholder="'내용을 입력하세요.'">
+                        <textarea 
+                            v-model="content" 
+                            class="form-control mb-2" 
+                            type="text" 
+                            :placeholder="'내용을 입력하세요.'"
+                            rows="15"
+                        >
                         </textarea>
                         <div v-if="errors.content" class="text-danger small mb-2">
                             <i class="bi bi-exclamation-triangle-fill"></i>
