@@ -1,6 +1,9 @@
 <template>
-    <div class="d-flex justify-content-between align-items-center">
-        <p>{{ comment.content }}</p>
+    <div class="d-flex justify-content-between align-items-center p-2">
+        <div>
+            <p class="fs-4">{{ comment.content }}</p>
+            <p class="fs-5"><i class="bi bi-person-fill me-2"></i>{{ comment.comment_writers_name }}</p>
+        </div>
         <template v-if="threadUser === loginUser || loginUser === comment.user">
             <button 
                 @click="onCommentRemove(comment.id)"

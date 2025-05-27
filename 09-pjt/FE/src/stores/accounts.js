@@ -32,8 +32,7 @@ export const useAccountStore = defineStore(
         })
         .then((res) => {
           user.value = res.data;
-          console.log(user.value);
-          // console.log("로그인 성공!! 유저 정보", user.value);
+          // console.log(user.value);
         });
       // .catch((err) => {
       //   throw err;
@@ -82,7 +81,7 @@ export const useAccountStore = defineStore(
         })
         .then((res) => {
           user.value = res.data;
-          console.log(user.value);
+          // console.log(user.value);
           // console.log("로그인 성공!! 유저 정보", user.value);
         })
         .catch((err) => {
@@ -100,7 +99,7 @@ export const useAccountStore = defineStore(
         }
       })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           user.value.follower_count = res.data.follower_count;
 
           return {

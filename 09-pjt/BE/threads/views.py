@@ -19,7 +19,7 @@ from .utils import (
 @api_view(['GET', 'POST'])
 def thread_list(request):
     if request.method == 'GET':
-        threads = Thread.objects.all()
+        threads = Thread.objects.all().order_by('-created_at')
         serializer = ThreadListSerializer(threads, many=True)
         return Response(serializer.data)
         

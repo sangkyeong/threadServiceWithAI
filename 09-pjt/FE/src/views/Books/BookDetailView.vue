@@ -8,17 +8,20 @@
       </div>
 
       <div class="col-md-9">
-        <h2 class="fw-bold">{{ book.title }}</h2>
-        <template v-if="accountStore.user">
-          <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}" class="btn btn-outline-primary btn-sm mt-2">쓰레드 작성</RouterLink>
-        </template>
+        <div class="d-flex justify-content-between align-items-center mt-auto">
+          <h2 class="fw-bold">{{ book.title }}</h2>
+          <template v-if="accountStore.user">
+            <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}" class="btn btn-outline-primary btn-sm mt-2 me-1">
+              <i class="bi bi-pencil-square"></i>
+            </RouterLink>
+          </template>
+        </div>
         <p class="mt-3">{{ book.description }}</p>
-        <p class="text-muted mb-1">
+        <p class="text mb-1">
           {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
         </p>
         <p class="mb-1" v-if="book.subTitle">{{ book.subTitle }}</p>
-        <p class="mb-1">ISBN: {{ book.isbn }}</p>
-        <p>고객 평점: {{ book.customer_review_rank }}</p>
+        <p>⭐ {{ book.customer_review_rank }}</p>
       </div>
       
     </div>

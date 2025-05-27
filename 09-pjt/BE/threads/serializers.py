@@ -3,6 +3,7 @@ from .models import Thread, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    comment_writers_name = serializers.SerializerMethodField()
     content = serializers.CharField(
         error_messages={
             'blank': '댓글을 입력해주세요.',
@@ -14,6 +15,9 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ('user', 'thread')
+
+    def get_comment_writers_name(self, obj):
+        return obj.user.username if obj.user else None
     
     def validate(self, data):
         errors = {}
@@ -29,7 +33,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ThreadListSerializer(serializers.ModelSerializer):
 
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     liked = serializers.SerializerMethodField()
     writers_name = serializers.SerializerMethodField()
@@ -37,6 +41,10 @@ class ThreadListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Thread
         fields = '__all__'
+
+    def get_comments(self, obj):
+        comments_qs = obj.comments.order_by('-created_at')
+        return CommentSerializer(comments_qs, many=True).data
 
     def get_like_count(self, obj):
         return obj.likes.count()

@@ -3,16 +3,16 @@
     <header class="site-header">
       <RouterLink :to="{ name: 'home' }" class="logo">Th<span>Read</span></RouterLink>
       <nav>
-        <RouterLink :to="{ name: 'threads' }">쓰레드</RouterLink>
-        <RouterLink :to="{ name: 'books' }">도서 검색</RouterLink>
+          <RouterLink :to="{ name: 'threads' }"><i class="bi fw-bold bi-pencil fs-4 me-2"></i></RouterLink>
+          <RouterLink :to="{ name: 'books' }"><i class="bi bi-book fs-4 me-2"></i></RouterLink>
 
-    <template v-if="accountStore.isLogin">
-      <RouterLink to="/profile">마이페이지</RouterLink>
-      <a href="#" @click.prevent="logoutHandler">로그아웃</a>
-    </template>
-    <template v-else>
-      <RouterLink to="/login">로그인</RouterLink>
-    </template>
+          <template v-if="accountStore.isLogin">
+            <RouterLink to="/profile"><i class="bi bi-person fs-4 me-2"></i></RouterLink>
+            <a href="#" @click.prevent="logoutHandler"><i class="bi bi-box-arrow-right fs-4"></i></a>
+          </template>
+          <template v-else>
+            <RouterLink to="/login"><i class="bi bi-key fs-4"></i></RouterLink>
+          </template>
       </nav>
     </header>
     <RouterView />
