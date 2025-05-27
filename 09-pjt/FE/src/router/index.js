@@ -18,25 +18,28 @@ import passwordChangeView from '@/views/PasswordChangeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  },
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: LandingView
+      path: "/",
+      name: "home",
+      component: LandingView,
     },
     {
-      path: '/threads',
-      name: 'threads',
-      component: ThreadsListView
+      path: "/threads",
+      name: "threads",
+      component: ThreadsListView,
     },
     {
-      path: '/threads/:threadId',
-      name: 'threadDetail',
-      component: ThreadDetailView
+      path: "/threads/:threadId",
+      name: "threadDetail",
+      component: ThreadDetailView,
     },
     {
-      path: '/threads/:threadId/update',
-      name: 'threadUpdate',
+      path: "/threads/:threadId/update",
+      name: "threadUpdate",
       component: ThreadUpdateView,
       beforeEnter: async (to, from, next) => {
         const threadStore = useThreadStore()
@@ -46,76 +49,76 @@ const router = createRouter({
           alert("잘못된 접근입니다.")
           next({ name: 'login' })
         } else {
-          next()
+          next();
         }
-      }
+      },
     },
     {
-      path: '/threads/:bookId/write',
-      name: 'threadWrite',
+      path: "/threads/:bookId/write",
+      name: "threadWrite",
       component: ThreadWriteView,
       beforeEnter: async (to, from, next) => {
-        const accountStore = useAccountStore()
+        const accountStore = useAccountStore();
         if (accountStore.user === null) {
-          alert("잘못된 접근입니다.")
-          next({ name: 'login' })
+          alert("잘못된 접근입니다.");
+          next({ name: "login" });
         } else {
-          next()
+          next();
         }
-      }
+      },
     },
     {
-      path: '/books',
-      name: 'books',
-      component: BookListView
+      path: "/books",
+      name: "books",
+      component: BookListView,
     },
     {
-      path: '/books/:id',
-      name: 'BookDetail',
+      path: "/books/:id",
+      name: "BookDetail",
       component: BookDetailView,
     },
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView
+      path: "/login",
+      name: "login",
+      component: LoginView,
     },
     {
-      path: '/signup',
-      name: 'signup',
-      component: SignupView
+      path: "/signup",
+      name: "signup",
+      component: SignupView,
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: ProfileView
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
     },
     {
-      path: '/profile/:userName',
-      name: 'userProfile',
+      path: "/profile/:userName",
+      name: "userProfile",
       component: userProfileView,
-      props: true
+      props: true,
     },
     {
-      path: '/profileUpdate',
-      name: 'ProfileUpdateView',
+      path: "/profileUpdate",
+      name: "ProfileUpdateView",
       component: ProfileUpdate,
     },
     {
-      path: '/passwordChange',
-      name: 'passwordChangeView',
+      path: "/passwordChange",
+      name: "passwordChangeView",
       component: passwordChangeView,
       beforeEnter: async (to, from, next) => {
-        const accountStore = useAccountStore()
+        const accountStore = useAccountStore();
         if (accountStore.user === null) {
-          alert("잘못된 접근입니다.")
-          next({ name: 'login' })
+          alert("잘못된 접근입니다.");
+          next({ name: "login" });
         } else {
-          next()
+          next();
         }
-      }
+      },
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   const accountStore = useAccountStore()
