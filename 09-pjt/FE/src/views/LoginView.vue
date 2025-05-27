@@ -1,17 +1,30 @@
 <template>
-  <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card p-4 shadow" style="max-width: 500px; width: 100%;">
-      <h1 class="text-center mb-4">로그인</h1>
-      <form @submit.prevent="loginHandler">
-        <input v-model="username" placeholder="아이디" class="form-control mb-2" />
-        <input v-model="password" type="password" placeholder="비밀번호" class="form-control mb-3" />
-        <label class="mb-3">
-          <input v-model="saveId" type="checkbox" /> 아이디 저장
-        </label>
-        <button type="submit" class="btn btn-primary w-100">로그인</button>
-        <br>
-      </form>
-      <RouterLink :to="{ name: 'signup' }">아직 회원이 아니신가요?</RouterLink>
+  <div class="container-fluid bg-dark text-white py-5 min-vh-100 d-flex justify-content-center align-items-start">
+    <div class="w-100" style="max-width: 32rem;">
+      <h1 class="text-white text-center fw-bold mb-4">로그인</h1>
+
+      <div class="card bg-secondary text-white shadow-lg p-5 rounded-4">
+
+        <form @submit.prevent="loginHandler">
+          <input v-model="username" placeholder="아이디" class="form-control form-control-lg mb-3 rounded" />
+          <input v-model="password" type="password" placeholder="비밀번호" class="form-control form-control-lg mb-3 rounded" />
+          <div class="form-check mb-4">
+            <input v-model="saveId" class="form-check-input" type="checkbox" id="saveIdCheck" />
+            <label class="form-check-label text-white-50" for="saveIdCheck">
+              아이디 저장
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg w-100 rounded">로그인</button>
+          <br>
+        </form>
+
+        <div class="text-center mt-2">
+          <RouterLink :to="{ name: 'signup' }" class="btn btn-secondary w-100 rounded text-decoration-none">
+            아직 회원이 아니신가요?
+          </RouterLink>
+        </div>
+
+      </div>
     </div>
   </div>
 </template>
@@ -58,3 +71,10 @@ const loginHandler = () => {
     })
 }
 </script>
+
+<style scoped>
+  .form-check-input:focus {
+    box-shadow: none;
+    outline: none;
+  }
+</style>
