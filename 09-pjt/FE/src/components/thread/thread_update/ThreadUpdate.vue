@@ -15,7 +15,7 @@
           <hr>
           <div>
             <h3 class="mb-3">내용</h3>
-            <input v-model="content" type="text" class="form-control mb-2" placeholder="내용을 입력하세요." />
+            <textarea rows="15" v-model="content" type="text" class="form-control mb-2" placeholder="내용을 입력하세요."> </textarea>
             <div v-if="errors.content" class="text-danger small mb-2">
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 {{ errors.content[0] }}
