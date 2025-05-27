@@ -4,6 +4,7 @@ from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    image = models.CharField(max_length=100, default='default.png')
 
     def __str__(self):
         return self.name

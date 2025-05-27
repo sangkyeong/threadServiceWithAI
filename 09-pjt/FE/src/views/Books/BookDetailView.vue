@@ -1,103 +1,94 @@
 <template>
-  <div class="book-detail-container">
-    <div class="book-main">
-      <img :src="book.cover" alt="Book Cover" class="book-cover" />
-      <div class="book-info">
-        <h2 class="book-title">{{ book.title }}</h2>
-        <p class="book-meta">
+  <div class="container-fluid bg-dark text-white py-5" v-if="book.title">
+    <div class="container">
+    <!-- 메인 정보 -->
+    <div class="row mb-5">
+      <div class="col-md-3">
+        <img :src="book.cover" alt="Book Cover" class="img-fluid rounded shadow-sm" />
+      </div>
+
+      <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mt-auto">
+          <h2 class="fw-bold">{{ book.title }}</h2>
+          <template v-if="accountStore.user">
+            <RouterLink :to="{name:'threadWrite', params:{bookId:bookId}}" class="btn btn-outline-primary btn-sm mt-2 me-1">
+              <i class="bi bi-pencil-square"></i>
+            </RouterLink>
+          </template>
+        </div>
+        <p class="mt-3">{{ book.description }}</p>
+        <p class="text mb-1">
           {{ book.author }} | {{ book.publisher }} | {{ book.pub_date }}
         </p>
-        <p class="book-subtitle">{{ book.subTitle }}</p>
-        <p class="book-description">{{ book.description }}</p>
-        <p class="book-isbn">ISBN: {{ book.isbn }}</p>
-        <p class="book-score">고객 평점: {{ book.customer_review_rank }}</p>
+        <p class="mb-1" v-if="book.subTitle">{{ book.subTitle }}</p>
+        <p>⭐ {{ book.customer_review_rank }}</p>
+      </div>
+      
+    </div>
+
+    <!-- 작가 정보 -->
+    <!-- 작가 정보가 중앙이 별로면 text-center 지우기 -->
+    <hr class="border-secondary" />
+    <div>
+      <h3 class="mb-4 text-center">작가 정보</h3>
+      <div class="d-flex align-items-start gap-4">
+        <img 
+          :src="book.author_photo || 'http://127.0.0.1:8000/static/default_author_img/default_author.jpg'" 
+          alt="Author Image" 
+          class="rounded-circle" 
+          style="width: 100px; height: 100px; object-fit: cover;" 
+        />
+        <div>
+          <p class="mb-1 fw-bold" style="font-size: 24px;">{{ book.author }}</p>
+          <p>{{ book.author_info }}</p>
+        </div>
       </div>
     </div>
 
-    <div class="author-info">
-      <h3>작가 정보</h3>
-      <div class="author-detail">
-        <img :src="book.author_image" alt="Author Image" class="author-img" />
-        <p>{{ book.author_intro }}</p>
+    <!-- 유사 도서 추천 -->
+    <hr class="border-secondary" />
+    
+    <div>
+      <h3 class="mb-4 text-center">AI 기반 유사 도서 추천</h3>
+      <div class="row gx-4 gy-4 justify-content-center text-center">
+        <div 
+          v-for="rBook in recommendBooks"
+          :key="rBook.id"
+          class="col-12 col-sm-6 col-md-4 col-lg-3"
+        >
+          <BookCard :book="rBook" :bookId="rBook.id" />
+        </div>
       </div>
     </div>
   </div>
+</div>
+
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
-import { useBooksStore } from '@/stores/data'
+import { useRoute, RouterLink } from 'vue-router'
+import { ref, watch, computed } from 'vue'
+import { useBookStore } from '@/stores/book'
+import BookCard from '@/components/book/BookCard.vue'
+import { useAccountStore } from '@/stores/accounts'
+
+const accountStore = useAccountStore()
 
 const route = useRoute()
-const bookId = route.params.bookId
-const booksStore = useBooksStore()
+const bookId = computed(() => route.params.id)
+const booksStore = useBookStore()
 
 const book = ref({})
+const recommendBooks = ref([])
 
-onMounted(() => {
-  const foundBook = booksStore.books.find(b => b.pk === parseInt(bookId))
+
+
+watch(bookId, async (newId) => {
+  const foundBook = booksStore.books.find(b => b.id === parseInt(newId))
   if (foundBook) {
-    book.value = foundBook.fields
+    book.value = foundBook
   }
-})
+
+  recommendBooks.value = await booksStore.recommendBooksForAI(newId)
+}, { immediate: true })
 </script>
-
-<style scoped>
-.book-detail-container {
-  padding: 2rem;
-  color: white;
-  background-color: #121212;
-  min-height: 100vh;
-}
-
-.book-main {
-  display: flex;
-  gap: 2rem;
-}
-
-.book-cover {
-  width: 180px;
-  height: 260px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.book-info {
-  flex: 1;
-}
-
-.book-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.book-meta,
-.book-subtitle,
-.book-description,
-.book-isbn,
-.book-score {
-  margin-bottom: 0.5rem;
-  color: #dddddd;
-}
-
-.author-info {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid #333;
-}
-
-.author-detail {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.author-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-</style>

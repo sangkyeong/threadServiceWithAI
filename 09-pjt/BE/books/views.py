@@ -1,38 +1,48 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from .models import Book, Category
 from rest_framework import status
+from .serializers import BookListSerializer, BookSerializer, CategorySerializer
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 # Permissions
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from django.shortcuts import get_object_or_404, get_list_or_404
-
-# from .serializers import ArticleListSerializer, ArticleSerializer
-from .models import Book
-
-
-# articles/views.py
-# @api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
-# def article_list(request):
-#     if request.method == 'GET':
-#         articles = get_list_or_404(Book)
-#         serializer = ArticleListSerializer(articles, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = ArticleSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save(user=request.user)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+from .utils import (
+    recommend_books_from_fixture,
+)
 
 
-# @api_view(['GET'])
-# def article_detail(request, article_pk):
-#     article = get_object_or_404(Book, pk=article_pk)
+@api_view(['GET'])
+def book_list(request):
+    books = get_list_or_404(Book)
+    serializer = BookListSerializer(books, many=True)
+    return Response(serializer.data)
 
-#     if request.method == 'GET':
-#         serializer = ArticleSerializer(article)
-#         print(serializer.data)
-#         return Response(serializer.data)
+@api_view(['GET'])
+def book_detail(request, book_pk):
+    book = get_object_or_404(Book, pk=book_pk)
+    serializer = BookSerializer(book)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def category_list(request):
+    categories = Category.objects.all()
+    serializer = CategorySerializer(categories, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def book_recommend(request, book_pk):
+    book = get_object_or_404(Book, pk=book_pk)
+
+    # 유사한 책 추천
+    recommended_books = recommend_books_from_fixture(book)
+    serializer = BookListSerializer(recommended_books, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def bestseller_books(request):
+    books = Book.objects.order_by('-customer_review_rank')[:10]
+    serializer = BookListSerializer(books, many=True)
+    return Response(serializer.data)

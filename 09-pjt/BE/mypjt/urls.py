@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('books/', include('books.urls')),
     path('threads/', include('threads.urls')),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/signup/', include('dj_rest_auth.registration.urls')),
-]
+    path('accounts/', include('accounts.urls')), # 웹페이지/커스텀 API
+    path('api/accounts/', include('dj_rest_auth.urls')), # API 전용
+    path('api/accounts/', include('dj_rest_auth.registration.urls')), # 외부 인증 패키지
+    path('api/books/', include('books.urls')), #  Book 앱 API 경로
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

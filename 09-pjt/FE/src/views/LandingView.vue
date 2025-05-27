@@ -1,96 +1,60 @@
 <template>
-    <!-- 2. Hero 섹션 -->
-    <section class="hero-section">
-      <img src="@/assets/hero_image.jpg" alt="Hero Image" class="hero-img" />
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">
-          AI 기반 도서 추천 커뮤니티 서비스
-        </h1>
-        <div class="hero-subtitle">
-          <span>Th</span><span style="color: #fe4a51">Read</span>
-        </div>
-      </div>
+  <div class="bg-dark text-white min-vh-100">
+    <HeroSection />
+
+    <section class="bestseller-section">
+      <h2 class="title">베스트셀러</h2>
+      <BookSlider :books="store.bestsellers" />
     </section>
 
+    <section class="genre-section">
+      <h2 class="title">카테고리</h2>
+      <GenreCard />
+    </section>
+
+    <section class="thread-section">
+      <h2 class="title">Thread</h2>
+      <ThreadCard  />
+    </section>
+
+  </div>
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import { useBookStore } from '@/stores/book'
+import BookSlider from '@/components/main_page/BookSlider.vue'
+import HeroSection from '@/components/main_page/HeroSection.vue'
+import GenreCard from '@/components/main_page/GenreCard.vue'
+import ThreadCard from '@/components/main_page/ThreadCard.vue'
 
+const store = useBookStore()
+
+onMounted(() => {
+  store.fetchBestsellers()
+})
 </script>
 
 <style scoped>
-
-@font-face {
-        font-family: "SBAggro_L";
-        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroL.woff")
-          format("woff");
-        font-weight: normal;
-        font-style: normal;
-      }
-      @font-face {
-        font-family: "GmarketSansMedium";
-        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
-          format("woff");
-        font-weight: normal;
-        font-style: normal;
-      }
-
-      /* Navbar 관련 스타일 */
-      /* 로고 font 설정 */
-      a.navbar-brand {
-        font-family: "GmarketSansMedium";
-      }
-      /* 메뉴 폰트 설정 */
-      .menu-item {
-        font-family: "SBAggro_L";
-      }
-
-      
-
-      /* Hero 섹션 관련 스타일 */
-      .hero-section {
-        min-height: 80vh;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: #fff;
-      }
-      .hero-section img.hero-img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 1;
-      }
-      .hero-overlay {
-        background: rgba(0, 0, 0, 0.5);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-      }
-      .hero-content {
-        position: relative;
-        z-index: 3;
-      }
-      .hero-title {
-        font-family: "GmarketSansTTFMedium";
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        border-radius: 0.2rem;
-        padding: 0 1rem;
-      }
-      .hero-subtitle {
-        font-weight: 700;
-        font-size: 1.5rem;
-      }
-
+  .genre-section, .bestseller-section, .thread-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 0 auto;    
+  }
+  .title {
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+    width: 100%; 
+    margin: 60px 0 20px;
+  }
+  html, body {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+  }
 </style>

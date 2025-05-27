@@ -16,6 +16,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -126,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -136,7 +141,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [ BASE_DIR / "static" ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -158,3 +165,20 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'accounts.User'
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_EMAIL_REQUIRED = False
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+}
+
+ACCOUNT_FORMS = {
+    'signup': 'accounts.forms.CustomSignupForm',
+}
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+CORS_ALLOW_ALL_ORIGINS = True

@@ -1,48 +1,52 @@
 <template>
-  <div>
-    <h1>ThreadList</h1>
-    <div
-      v-for="category in categoryStore.categories"
-      :key="category.fields.pk"
-      :category="category"
-      @click="selectedCategoryId = category.fields.pk"
-    >
-      {{ category.fields.name }}
-    </div>
+  <div class="container-fluid bg-dark text-white min-vh-100">
+    <div class="container py-4">
+      <h2 class="mb-4 border-bottom pb-2 fw-bold">쓰레드 목록</h2>
+        <div v-if="threadStore.threads?.length > 0" class="row g-4 justify-content-center">
+          <ThreadItem
+            v-for="thread in visibleThreads"
+            :key="thread.id"
+            :thread="thread"
+            :threadId="thread.id"
+            class="col-6 col-sm-6 col-md-4 col-lg-3 m-2 "
+          />
+        </div>
+        <div v-else class="text-center mt-5">
+          <p>쓰레드가 없습니다.</p>
+        </div>
 
-    <div>
-      <div v-if="threads">
-        <ThreadItem
-          v-for="thread in threads"
-          :key="thread.id"
-          :thread="thread"
-        />
-      </div>
-      <div v-else>
-        <h2>스레드가 없습니다.</h2>
-      </div>
+        <!-- 펼처보기 btn -->
+        <div class="text-center mt-4">
+          <button
+            v-if="visibleCount < threadStore.threads.length"
+            @click="visibleCount += 20"
+            class="btn btn-outline-light"
+          >
+            + 펼처보기
+          </button>
+        </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { onMounted, ref, computed  } from 'vue'
 import ThreadItem from '@/components/thread/thread_list/ThreadItem.vue'
-import { useCategoryStore } from '@/stores/data.js'
 import { useThreadStore } from '@/stores/thread.js'
-
+const visibleCount = ref(20)
 const threadStore = useThreadStore()
-const categoryStore = useCategoryStore()
+onMounted(() => {
+  threadStore.getAllThreads()
+})
 
-const selectedCategoryId = ref(null)
-
-const threads = computed(() => {
-  if (!selectedCategoryId.value) return threadStore.threads
-  return threadStore.threads.filter(thread => thread.categoryId === selectedCategoryId.value)
+const visibleThreads = computed(() => {
+  return threadStore.threads.slice(0, visibleCount.value)
 })
 
 </script>
 
 <style scoped>
-
+h2 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
 </style>

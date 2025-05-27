@@ -1,114 +1,137 @@
 <template>
-  <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li
-          v-for="category in categoryStore.categories"
-          :key="category.pk"
-          :class="{ active: selectedCategory === category.pk }"
-          @click="selectedCategory = category.pk"
-        >
-          {{ category.fields.name }}
-        </li>
-      </ul>
-    </aside>
+  <div class="container-fluid bg-dark text-white min-vh-100">
+    <div class="row">
 
-    <main class="book-area">
-      <div class="search-bar">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="검색어를 입력하세요..."
-        />
-      </div>
+      <!-- Sidebar -->
+      <aside class="col-md-2 bg-dark py-4">
+        <ul class="list-unstyled">
+          <li
+            v-for="category in categoriesWithAll"
+            :key="category.id"
+            @click="selectedCategory = category.id"
+            :class="['category-item', selectedCategory === category.id ? 'active-category' : '']"
+          >
+            {{ category.name }}
+          </li>
+        </ul>
+      </aside>
 
-      <div class="book-grid">
-        <BookCard
-          v-for="book in filteredBooks"
-          :key="book.pk"
-          :book="book.fields"
-        />
-      </div>
-    </main>
+      <!-- Main Content -->
+      <main class="col-md-10 p-4 bg-dark">
+
+        <!-- Search Bar -->
+        <div class="mb-4">
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="form-control bg-dark text-white border-0"
+            placeholder="검색어를 입력하세요..."
+          />
+        </div>
+
+        <!-- Book Grid -->
+        <div class="row g-4">
+          <div
+            class="col-6 col-sm-6 col-md-4 col-lg-3"
+            v-for="book in visibleBooks"
+            :key="book.id"
+          >
+            <BookCard :book="book" :bookId="book.id"/>
+          </div>
+        </div>
+        
+        <!-- 펼처보기 btn -->
+        <div class="text-center mt-4">
+          <button
+            v-if="visibleCount < filteredBooks.length"
+            @click="visibleCount += 20"
+            class="btn btn-outline-light"
+          >
+            + 펼처보기
+          </button>
+        </div>
+
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import BookCard from './BookCard.vue'
+  import { ref, computed, onMounted } from 'vue'
+  import { useBookStore } from '@/stores/book'
+  import { useCategoryStore } from '@/stores/category'
+  import BookCard from './BookCard.vue'
+  import { useRoute } from 'vue-router'
 
-const booksStore = useBooksStore()
-const categoryStore = useCategoryStore()
+  const booksStore = useBookStore()
+  const categoryStore = useCategoryStore()
+  const route = useRoute()
+  const selectedCategory = ref(0)
+  const searchQuery = ref('')
+  const visibleCount = ref(20)
 
-const selectedCategory = ref(0)
-const searchQuery = ref('')
+  onMounted(() => {
+    booksStore.fetchBooks()
+    categoryStore.fetchCategories()
 
-const filteredBooks = computed(() => {
-  return booksStore.books.filter(book => {
-    const matchCategory =
-      selectedCategory.value === 0 ||
-      book.fields.category === selectedCategory.value
-    const matchSearch = book.fields.title.includes(searchQuery.value)
-    return matchCategory && matchSearch
+    const categoryFromQuery = Number(route.query.category)
+    if (categoryFromQuery) {
+      selectedCategory.value = categoryFromQuery
+    }
+    window.scrollTo(0, 0)
   })
-})
+
+  const categoriesWithAll = computed(() => [
+  { id: 0, name: '전체' },
+  ...categoryStore.categories
+  ])
+
+  const filteredBooks = computed(() => {
+    return booksStore.books.filter(book => {
+      const matchCategory =
+        selectedCategory.value === 0 ||
+        book.category === selectedCategory.value
+      const matchSearch = book.title.includes(searchQuery.value)
+      return matchCategory && matchSearch
+    })
+  })
+
+  const visibleBooks = computed(() => {
+      return filteredBooks.value.slice(0, visibleCount.value)
+    })
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #121212;
-  color: white;
-}
+  input::placeholder {
+    color: #ccc;
+  }
 
-.sidebar {
-  width: 220px;
-  background-color: #1c1c1c;
-  padding: 1rem;
-}
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  aside ul {
+    text-align: center;
+  }
 
+  aside li {
+    width: 100%;
+  }
 
-.sidebar li {
-  padding: 0.6rem 0;
-  cursor: pointer;
-  color: #ddd;
-  border-left: 4px solid transparent;
-  padding-left: 10px;
-  transition: all 0.2s;
-}
+  .category-item {
+    color: #bbb;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+  }
 
-.sidebar li.active {
-  font-weight: bold;
-  color: #ffffff;
-  border-left: 4px solid #ff5656;
-}
+.category-item:hover {
+    /* background-color: #2f2f2f; */
+    color: #fff;
+    transform: translateX(5px); /* 부드럽게 오른쪽으로 슥 밀리는 느낌 */
+  }
 
-.book-area {
-  flex: 1;
-  padding: 2rem;
-  background-color: #1a1a1a;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 0.7rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #2a2a2a;
-  color: white;
-  margin-bottom: 1.5rem;
-}
-
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
-}
+.active-category {
+    color: #fff;
+    font-weight: bold;
+    background-color: #1c1c1c;
+    border-left: 4px solid #ff5656;
+  }
 </style>

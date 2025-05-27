@@ -1,51 +1,181 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useBooksStore } from '@/stores/data.js'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { useAccountStore } from './accounts'
 
 
 export const useThreadStore = defineStore('threads', () => {
-  let id = 1
-
   const threads = ref([])
+  const BASE_URL = 'http://127.0.0.1:8000/threads'
+  const router = useRouter()
+  const errors = ref('')
+  const threadDetail = ref(null)
+  const accountStore = useAccountStore()
 
-  const addThreads = function(title, bookId, content, readDate){
-    const bookStore = useBooksStore()
-    const categoryId = computed(() => {
-    const book = bookStore.books.find(book => book.id === bookId)
-    const categoryId = book ? book.categoryId : null
+  const getAllThreads = function(){
+    axios({
+      method: 'get',
+      url: `${BASE_URL}/`
     })
-    threads.value.push({
-      id: id++,
-      bookId: bookId,
-      categoryId: categoryId,
-      title: title,
-      content: content,
-      readDate: readDate,
+    .then((res) => {
+      threads.value = res.data
+    })
+    .catch((err) => {
+      // console.log(err) 
+      throw err
+    })
+  }
+
+  const addThreads = async (title, bookId, content, reading_date) => {
+    return await axios.post(
+      `${BASE_URL}/${bookId}/create/`,
+        {
+          title: title,
+          content: content,
+          reading_date: reading_date,
+        },
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+    ).then((res) => {
+      alert("쓰레드가 저장되었습니다.")
+      router.push({name: 'threads'})
+    })
+    .catch((err) => {
+      // console.log(err)
+      // alert(err.response.data.msg)
+      throw err
     })
   }
 
   const getThreadById = (threadId) => {
-    return threads.value.find(thread => thread.id === Number(threadId))
+    const config = {}
+    if (accountStore.token) {
+      config.headers = {
+        'Authorization': `Token ${accountStore.token}`
+      }
+    }
+    axios.get(
+      `${BASE_URL}/${threadId}/detail/`, config
+    ).then((res) => {
+      threadDetail.value = res.data
+    })
+    .catch((err) => {
+      threadDetail.value = null
+      // console.log(err)
+      throw err
+    })
   }
 
   const removeThread = (threadId) => {
-    threads.value = threads.value.filter(thread => thread.id !== threadId)
+      axios.delete(
+        `${BASE_URL}/${threadId}/delete/`,
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+      ).then((res) => {
+        alert("쓰레드가 삭제되었습니다.")
+        router.push({name: 'threads'})
+      })
+      .catch((err) => {
+        // console.log(err)
+        // alert(err.response.data.msg)
+        throw err
+      })
   }
 
- const updateThread = (threadId, { title, content, readDate }) => {
-  const idx = threads.value.findIndex(thread => thread.id === Number(threadId))
-  if (idx !== -1) {
-    threads.value[idx] = {
-      ...threads.value[idx],
-      title,
-      content,
-      readDate,
+  const updateThread = async (threadId, { title, content, reading_date }) => {
+    return await axios.patch(
+      `${BASE_URL}/${threadId}/update/`,
+        {
+          title: title,
+          content: content,
+          reading_date: reading_date,
+        },
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+    ).then((res) => {
+      alert("쓰레드가 수정되었습니다.")
+      router.push({name: 'threads'})
+    })
+    .catch((err) => {
+      console.log(err)
+        if(err.response.data.msg){
+          alert(err.response.data.msg)
+        }
+      throw err
+    })
+  }
+
+  const likeThread = async function(threadId){
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/${threadId}/likes/`,
+        {},
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+      )
+      return res.data
+    } catch (err) {
+      throw err
     }
   }
-}
+
+  const addThreadComment = async (threadId, content) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/${threadId}/comment/create/`,
+        {content},
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+      )
+      return res.data
+    } catch (err) {
+      console.log(err)
+      if(err.response.data.msg){
+          alert(err.response.data.msg)
+        }
+      throw err
+    }
+  }
+
+  const removeThreadComment = async (commentId) => {
+      return await axios.delete(
+          `${BASE_URL}/comment/${commentId}/delete/`,
+        {
+          headers: {
+            'Authorization': `Token ${accountStore.token}`
+          }
+        }
+        ).then((res) => {
+          // console.log(res)
+        })
+        .catch((err) => {
+          alert(err.response.data.msg)
+          throw err
+        })
+    }
 
   return{
-    threads, 
-    addThreads, getThreadById, removeThread, updateThread
+    threads, errors, threadDetail, 
+    getAllThreads, addThreads, getThreadById, removeThread, updateThread, likeThread,
+    addThreadComment, removeThreadComment
   }
-}, { persist: true})
+}, { persist: {
+    paths: ['threads']
+  }
+})
