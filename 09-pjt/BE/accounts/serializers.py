@@ -281,8 +281,8 @@ class passwordSerializer(serializers.ModelSerializer):
         write_only=True,
         style={'input_type': 'password'},
         error_messages={
-            'blank': '비밀번호 확인을 입력해주세요.',
-            'required': '비밀번호 확인은 필수 항목입니다.',
+            'blank': '새 비밀번호 확인을 입력해주세요.',
+            'required': '새 비밀번호 확인은 필수 항목입니다.',
         }
     )
 

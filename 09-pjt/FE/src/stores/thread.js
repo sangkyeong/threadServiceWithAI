@@ -12,7 +12,6 @@ export const useThreadStore = defineStore('threads', () => {
   const errors = ref('')
   const threadDetail = ref(null)
   const accountStore = useAccountStore()
-  const token = ref(accountStore.token)
 
   const getAllThreads = function(){
     axios({
@@ -38,7 +37,7 @@ export const useThreadStore = defineStore('threads', () => {
         },
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
     ).then((res) => {
@@ -47,15 +46,16 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       console.log(err)
+      alert(err.response.data.msg)
       throw err
     })
   }
 
   const getThreadById = (threadId) => {
     const config = {}
-    if (token.value) {
+    if (accountStore.token) {
       config.headers = {
-        'Authorization': `Token ${token.value}`
+        'Authorization': `Token ${accountStore.token}`
       }
     }
     axios.get(
@@ -75,7 +75,7 @@ export const useThreadStore = defineStore('threads', () => {
         `${BASE_URL}/${threadId}/delete/`,
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
       ).then((res) => {
@@ -84,6 +84,7 @@ export const useThreadStore = defineStore('threads', () => {
       })
       .catch((err) => {
         console.log(err)
+        alert(err.response.data.msg)
         throw err
       })
   }
@@ -98,7 +99,7 @@ export const useThreadStore = defineStore('threads', () => {
         },
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
     ).then((res) => {
@@ -107,6 +108,7 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       console.log(err)
+      alert(err.response.data.msg)
       throw err
     })
   }
@@ -118,7 +120,7 @@ export const useThreadStore = defineStore('threads', () => {
         {},
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
       )
@@ -136,13 +138,16 @@ export const useThreadStore = defineStore('threads', () => {
         {content},
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
       )
       return res.data
     } catch (err) {
       console.log(err)
+      if(err.response.data.msg){
+          alert(err.response.data.msg)
+        }
       throw err
     }
   }
@@ -152,7 +157,7 @@ export const useThreadStore = defineStore('threads', () => {
           `${BASE_URL}/comment/${commentId}/delete/`,
         {
           headers: {
-            'Authorization': `Token ${token.value}`
+            'Authorization': `Token ${accountStore.token}`
           }
         }
         ).then((res) => {
@@ -160,6 +165,7 @@ export const useThreadStore = defineStore('threads', () => {
         })
         .catch((err) => {
           console.log(err)
+          alert(err.response.data.msg)
           throw err
         })
     }
