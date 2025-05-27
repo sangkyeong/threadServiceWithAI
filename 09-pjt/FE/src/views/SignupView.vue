@@ -8,26 +8,26 @@
 
       <form @submit.prevent="signupHandler">
         <input v-model="username" type="text" placeholder="아이디" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
-        <div v-if="errors.username" class="text-danger small mb-2">{{ errors.username[0] }}</div>
+        <div v-if="errors.username" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.username[0] }}</div>
         
-        <input v-model="password1" type="password" placeholder="비밀번호" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
-        <div v-if="errors.password1" class="text-danger small mb-2">{{ errors.password1[0] }}</div>
+        <input v-model="password1" type="password" placeholder="비밀번호" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.password1 }"/>
+        <div v-if="errors.password1" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.password1[0] }}</div>
         
-        <input v-model="password2" type="password" placeholder="비밀번호 확인" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
-        <div v-if="errors.password2" class="text-danger small mb-2">{{ errors.password2[0] }}</div>
+        <input v-model="password2" type="password" placeholder="비밀번호 확인" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.password2 }"/>
+        <div v-if="errors.password2" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.password2[0] }}</div>
         
-        <input v-model="email" type="email" placeholder="이메일" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
-        <div v-if="errors.email" class="text-danger small mb-2">{{ errors.email[0] }}</div>
+        <input v-model="email" type="email" placeholder="이메일" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.email }"/>
+        <div v-if="errors.email" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.email[0] }}</div>
 
-        <select v-model="gender" class="form-select form-control-lg mb-2" :class="{ 'is-invalid': errors.username }">
+        <select v-model="gender" class="form-select form-control-lg mb-2" :class="{ 'is-invalid': errors.gender }">
           <option disabled value="">성별 선택</option>
           <option value="M">남성</option>
           <option value="F">여성</option>
         </select>
-        <div v-if="errors.gender" class="text-danger small mb-2">{{ errors.gender[0] }}</div>
+        <div v-if="errors.gender" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.gender[0] }}</div>
 
-        <input v-model.number="age" type="number" min="1" placeholder="나이" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.username }"/>
-        <div v-if="errors.age" class="text-danger small mb-2">{{ errors.age[0] }}</div>
+        <input v-model.number="age" type="number" min="1" placeholder="나이" class="form-control form-control-lg mb-2" :class="{ 'is-invalid': errors.age }"/>
+        <div v-if="errors.age" class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill  me-2"></i>{{ errors.age[0] }}</div>
 
         <label class="form-label fw-bold">관심 장르</label>
         <div class="form-check" v-for="genre in genreOptions" :key="genre.id">
@@ -36,7 +36,7 @@
             {{ genre.name }}
           </label>
         </div>
-        <div v-if="errors.interested_genres" class="text-danger small mb-2">{{ errors.interested_genres[0] }}</div>
+        <!-- <div v-if="errors.interested_genres" class="text-danger small mb-2">{{ errors.interested_genres[0] }}</div> -->
 
         <button class="btn btn-primary btn-lg w-100 rounded mt-3">가입하기</button>
       </form>

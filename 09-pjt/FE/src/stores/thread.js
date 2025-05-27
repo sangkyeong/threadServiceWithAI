@@ -22,7 +22,7 @@ export const useThreadStore = defineStore('threads', () => {
       threads.value = res.data
     })
     .catch((err) => {
-      console.log(err) 
+      // console.log(err) 
       throw err
     })
   }
@@ -45,8 +45,8 @@ export const useThreadStore = defineStore('threads', () => {
       router.push({name: 'threads'})
     })
     .catch((err) => {
-      console.log(err)
-      alert(err.response.data.msg)
+      // console.log(err)
+      // alert(err.response.data.msg)
       throw err
     })
   }
@@ -65,7 +65,7 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       threadDetail.value = null
-      console.log(err)
+      // console.log(err)
       throw err
     })
   }
@@ -83,8 +83,8 @@ export const useThreadStore = defineStore('threads', () => {
         router.push({name: 'threads'})
       })
       .catch((err) => {
-        console.log(err)
-        alert(err.response.data.msg)
+        // console.log(err)
+        // alert(err.response.data.msg)
         throw err
       })
   }
@@ -108,7 +108,9 @@ export const useThreadStore = defineStore('threads', () => {
     })
     .catch((err) => {
       console.log(err)
-      alert(err.response.data.msg)
+        if(err.response.data.msg){
+          alert(err.response.data.msg)
+        }
       throw err
     })
   }
@@ -126,7 +128,6 @@ export const useThreadStore = defineStore('threads', () => {
       )
       return res.data
     } catch (err) {
-      console.log(err)
       throw err
     }
   }
@@ -164,7 +165,6 @@ export const useThreadStore = defineStore('threads', () => {
           // console.log(res)
         })
         .catch((err) => {
-          console.log(err)
           alert(err.response.data.msg)
           throw err
         })

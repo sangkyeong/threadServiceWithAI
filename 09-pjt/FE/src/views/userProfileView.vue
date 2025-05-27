@@ -19,8 +19,12 @@
         </div>
 
         <div class="text-center mb-4" v-if="accountStore.user && accountStore.user?.username !== user.username">
-          <button @click="followHandler" :class="['btn',  user.is_follow ? 'btn-danger' : 'btn-outline-light']">
-            {{ user.is_follow ? '팔로우 취소' : '팔로우' }}
+          <button
+            @click="followHandler"
+            :class="['btn', user.is_follow ? 'btn-danger' : 'btn-outline-light']"
+          >
+            <i :class="iconClass"></i>
+            {{ buttonText }}
           </button>
         </div>
 
@@ -48,7 +52,7 @@
 <script setup>
 import { useAccountStore } from '@/stores/accounts'
 import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const accountStore = useAccountStore()
 const route = useRoute()
@@ -58,6 +62,14 @@ const user = ref(null)
 onMounted(async ()=> {
   user.value = await accountStore.getUser(route.params.userName)
 })
+
+const iconClass = computed(() =>
+  user.value.is_follow ? 'bi bi-person-dash-fill' : 'bi bi-person-plus-fill'
+)
+
+const buttonText = computed(() =>
+  user.value.is_follow ? '팔로우 취소' : '팔로우'
+)
 
 const followHandler = async () => {
   await accountStore.follow(user.value.pk)

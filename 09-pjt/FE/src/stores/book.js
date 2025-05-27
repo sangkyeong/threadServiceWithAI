@@ -16,7 +16,7 @@ export const useBookStore = defineStore('books', () => {
         books.value = res.data
       })
       .catch(err => {
-        console.error('책 불러오기 실패 확인하세요', err)
+        // console.error('책 불러오기 실패 확인하세요', err)
       })
   }
 
@@ -27,7 +27,7 @@ export const useBookStore = defineStore('books', () => {
       )
       return res.data
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       throw err
     }
   }

@@ -15,7 +15,7 @@ export const useCategoryStore = defineStore('categories', () => {
         categories.value = res.data
       })
       .catch(err => {
-        console.error(err)
+        // console.error(err)
       })
   }
 

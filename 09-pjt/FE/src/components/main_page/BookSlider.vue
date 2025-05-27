@@ -166,9 +166,9 @@
   }
   
   .book-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: white;
     text-align: center;
     -webkit-box-orient: vertical;
     overflow: hidden;

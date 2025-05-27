@@ -88,13 +88,19 @@
 
   .thread-title {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     margin-bottom: 6px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;     /* 딱 2줄까지만 보여줌 */
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
   }
 
   .thread-desc {
     font-size: 14px;
     color: #555;
   }
-
 </style>

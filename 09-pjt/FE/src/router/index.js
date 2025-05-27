@@ -47,7 +47,7 @@ const router = createRouter({
         await threadStore.getThreadById(to.params.threadId)
         if (accountStore.user === null || accountStore.user.pk !== threadStore.threadDetail.user) {
           alert("잘못된 접근입니다.")
-          next({ name: 'login' })
+          next({ name: 'home' })
         } else {
           next();
         }
@@ -61,7 +61,7 @@ const router = createRouter({
         const accountStore = useAccountStore();
         if (accountStore.user === null) {
           alert("잘못된 접근입니다.");
-          next({ name: "login" });
+          next({ name: "home" });
         } else {
           next();
         }

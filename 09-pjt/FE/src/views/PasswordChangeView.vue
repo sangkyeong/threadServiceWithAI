@@ -1,37 +1,33 @@
 <template>
-  <div class="container-fluid bg-dark text-white min-vh-100 py-4">
-    <div class="container">
-      <h1 class="mb-4 border-bottom pb-2 fw-bold"> 비밀번호 변경</h1>
-      <div>
-        <h3 class="mb-3">현재 비밀번호</h3>
-        <input type="password" v-model="currentPassword" class="form-control mb-2" placeholder="현재 비밀번호를 입력하세요." />
-            <div v-if="errors.current_password" class="text-danger small mb-2">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                {{ errors.current_password[0] }}
-            </div>
-      </div>
-      <hr>
+    <div class="container-fluid bg-dark text-white py-5 min-vh-100 d-flex justify-content-center align-items-start">
+    <div class="w-100" style="max-width: 32rem;">
+      <h1 class="text-white text-center fw-bold mb-4"> 비밀번호 변경</h1>
 
-      <div>
-        <h3 class="mb-3">새 비밀번호</h3>
-        <input type="password"  v-model="newPassword" class="form-control mb-2" placeholder="새 비밀번호를 입력하세요." />
-            <div v-if="errors.password1" class="text-danger small mb-2">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                {{ errors.password1[0] }}
-            </div>
-      </div>
-      <hr>
+      <div class="card bg-secondary text-white shadow-lg p-5 rounded-4">
+        <div>
+          <input type="password" v-model="currentPassword" class="form-control form-control-lg mb-2" placeholder="현재 비밀번호를 입력하세요." :class="{ 'is-invalid': errors.current_password }" />
+              <div v-if="errors.current_password" class="text-danger small mb-2">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  {{ errors.current_password[0] }}
+              </div>
+        </div>
 
-      <div>
-        <h3 class="mb-3">새 비밀번호 확인</h3>
-        <input type="password"  v-model="confirmPassword" class="form-control mb-2" placeholder="새 비밀번호 확인을 입력하세요." />
-            <div v-if="errors.password2" class="text-danger small mb-2">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                {{ errors.password2[0] }}
-            </div>
+        <div>
+          <input type="password"  v-model="newPassword" class="form-control form-control-lg mb-2" placeholder="새 비밀번호를 입력하세요."  :class="{ 'is-invalid': errors.password1 }"/>
+              <div v-if="errors.password1" class="text-danger small mb-2">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  {{ errors.password1[0] }}
+              </div>
+        </div>
+        <div>
+          <input type="password"  v-model="confirmPassword" class="form-control form-control-lg mb-2" placeholder="새 비밀번호 확인을 입력해주세요." :class="{ 'is-invalid': errors.password2 }"/>
+              <div v-if="errors.password2" class="text-danger small mb-2">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  {{ errors.password2[0] }}
+              </div>
+        </div>
+        <button @click="changePassword" class="btn btn-primary">변경</button>
       </div>
-      <hr>
-      <button @click="changePassword" class="btn btn-outline-primary">변경</button>
     </div>
   </div>
 </template>

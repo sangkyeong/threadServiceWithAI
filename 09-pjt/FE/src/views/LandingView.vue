@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-dark text-white min-vh-100">
     <HeroSection />
 
     <section class="bestseller-section">
@@ -13,7 +13,7 @@
     </section>
 
     <section class="thread-section">
-      <h2 class="title">실시간 추천 글</h2>
+      <h2 class="title">Thread</h2>
       <ThreadCard  />
     </section>
 
@@ -42,7 +42,7 @@ onMounted(() => {
     align-items: flex-start;
     width: 100%;
     max-width: 1100px;
-    margin: 0 auto 48px auto;
+    margin: 0 auto 0 auto;    
   }
   .title {
     margin-bottom: 20px;
@@ -51,5 +51,10 @@ onMounted(() => {
     width: 100%; 
     margin: 60px 0 20px;
   }
-
+  html, body {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+  }
 </style>
