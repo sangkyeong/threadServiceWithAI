@@ -48,7 +48,7 @@ def generate_image_with_openai(thread_title, thread_content, book_title, book_au
         model="dall-e-2",
         prompt=img_generator_prompt,
         size="512x512",
-        quality="standard",
+        # quality="standard",
         n=1,
     )
 

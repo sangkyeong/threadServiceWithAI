@@ -37,12 +37,12 @@ def thread_create(request, book_pk):
     if serializer.is_valid(raise_exception=True):
         thread = serializer.save(user=request.user, book=book)
         # 스레드 생성형 이미지 제작
-        # generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
+        generated_image_path = generate_image_with_openai(thread.title, thread.content, book.title, book.author)
         
-        # if generated_image_path:
-        #     thread.cover_img = generated_image_path
-        #     thread.save()
-        thread.save()
+        if generated_image_path:
+            thread.cover_img = generated_image_path
+            thread.save()
+        # thread.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -105,14 +105,12 @@ def create_comment(request, thread_pk):
     
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        serializer.save(thread=thread, user = request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # commentPass = comment_openai(request.data)
-        # if not commentPass:
-        #     serializer.save(thread=thread, user = request.user)
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # else:
-        #     return Response({'notice': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
+        commentPass = comment_openai(request.data)
+        if not commentPass:
+            serializer.save(thread=thread, user = request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'notice': '욕설이 포함되어 있습니다. 커뮤니티 규정을 준수하세요!'}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
